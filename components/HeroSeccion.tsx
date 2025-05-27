@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Calendar, MapPin, Phone, Clock, Menu, X } from "lucide-react"
+import { Calendar, MapPin, Clock, Menu, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 export default function Component() {

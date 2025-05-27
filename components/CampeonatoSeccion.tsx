@@ -54,14 +54,6 @@ export default function ChampionshipStandings() {
     { position: 10, name: "Joaquín MORALES", team: "Turbo Team", points: 64 },
   ]
 
-  const teams = [
-    { position: 1, name: "Racing Team Red", points: 387, drivers: "C. Rodriguez, L. Gutierrez" },
-    { position: 2, name: "Speed Motors", points: 298, drivers: "M. Fernandez, P. Castro" },
-    { position: 3, name: "Thunder Racing", points: 245, drivers: "D. Martinez, R. Vega" },
-    { position: 4, name: "Velocity Team", points: 201, drivers: "A. Silva, J. Mendez" },
-    { position: 5, name: "Power Racing", points: 178, drivers: "R. Garcia, S. Ramos" },
-  ]
-
   const getPositionIcon = (position: number) => {
     switch (position) {
       case 1:

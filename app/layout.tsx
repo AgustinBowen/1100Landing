@@ -1,4 +1,4 @@
-import { Inter,Geist, Geist_Mono } from "next/font/google";
+import { Inter} from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next"

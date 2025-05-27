@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { Camera, Calendar, Trophy, Users, Clock, Zap } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
