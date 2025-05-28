@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, MapPin, Trophy, Clock, Flag, CheckCircle, Users } from "lucide-react"
+import { Calendar, MapPin, Trophy, Clock, Flag, CheckCircle, Users } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export default function RaceCalendar() {
+export default function CalendarSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
   const races = [
@@ -19,7 +19,7 @@ export default function RaceCalendar() {
       status: "completed",
       winner: "Carlos RODRIGUEZ",
       winnerTeam: "Racing Team Red",
-      image: "/images/ganadorfecha1.jpg",
+      image: "/placeholder.svg?height=200&width=400",
     },
     {
       id: 2,
@@ -135,7 +135,7 @@ export default function RaceCalendar() {
     switch (status) {
       case "completed":
         return {
-          bgColor: "bg-black/90",
+          bgColor: "bg-[#080808]",
           borderColor: "border-green-500/30",
           hoverBorder: "hover:border-green-500",
           hoverShadow: "hover:shadow-green-500/20",
@@ -145,7 +145,7 @@ export default function RaceCalendar() {
         }
       case "next":
         return {
-          bgColor: "bg-black/90",
+          bgColor: "bg-[#080808]",
           borderColor: "border-red-500/50",
           hoverBorder: "hover:border-red-500",
           hoverShadow: "hover:shadow-red-500/30",
@@ -155,7 +155,7 @@ export default function RaceCalendar() {
         }
       case "live":
         return {
-          bgColor: "bg-black/90",
+          bgColor: "bg-[#080808]",
           borderColor: "border-red-500/70",
           hoverBorder: "hover:border-red-500",
           hoverShadow: "hover:shadow-red-500/40",
@@ -165,7 +165,7 @@ export default function RaceCalendar() {
         }
       case "upcoming":
         return {
-          bgColor: "bg-black/90",
+          bgColor: "bg-[#080808]",
           borderColor: "border-gray-500/20",
           hoverBorder: "hover:border-white/50",
           hoverShadow: "hover:shadow-white/10",
@@ -175,7 +175,7 @@ export default function RaceCalendar() {
         }
       default:
         return {
-          bgColor: "bg-black/90",
+          bgColor: "bg-[#080808]",
           borderColor: "border-gray-500/20",
           hoverBorder: "hover:border-white/50",
           hoverShadow: "hover:shadow-white/10",
@@ -215,7 +215,7 @@ export default function RaceCalendar() {
             return (
               <Card
                 key={race.id}
-                className={`${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.hoverBorder} backdrop-blur-sm overflow-hidden group hover:scale-102 hover:-translate-y-1 transition-all duration-300 hover:shadow-xl ${statusConfig.hoverShadow} cursor-pointer`}
+                className={`${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.hoverBorder} border-2 backdrop-blur-sm overflow-hidden group hover:scale-102 hover:-translate-y-1 transition-all duration-300 hover:shadow-xl ${statusConfig.hoverShadow} cursor-pointer`}
                 onMouseEnter={() => setHoveredCard(race.id)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
@@ -226,7 +226,7 @@ export default function RaceCalendar() {
                       <img
                         src={race.image || "/placeholder.svg"}
                         alt={race.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover ml-2 rounded-sm"
                       />
 
                       {/* Racing stripes effect on hover */}
@@ -305,8 +305,8 @@ export default function RaceCalendar() {
         </div>
 
         {/* Calendar Summary */}
-        <div className="mt-8 grid grid-cols-3 gap-4">
-          <Card className="bg-black/90 border-green-500/20">
+        <div className="mt-8 grid grid-cols-3 gap-4 ">
+          <Card className="bg-black/90 border-green-500/20 border-2">
             <CardContent className="p-4 text-center">
               <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
               <h3 className="text-sm font-bold mb-1 text-white">Finalizadas</h3>
@@ -314,7 +314,7 @@ export default function RaceCalendar() {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/90 border-red-500/30">
+          <Card className="bg-black/90 border-red-500/30 border-2">
             <CardContent className="p-4 text-center">
               <div className="flex items-center justify-center gap-1 mb-2">
                 <Flag className="w-6 h-6 text-red-500 animate-pulse" />
@@ -325,7 +325,7 @@ export default function RaceCalendar() {
             </CardContent>
           </Card>
 
-          <Card className="bg-black/90 border-gray-500/20">
+          <Card className="bg-black/90 border-gray-500/20 border-2">
             <CardContent className="p-4 text-center">
               <Clock className="w-6 h-6 text-gray-400 mx-auto mb-2" />
               <h3 className="text-sm font-bold mb-1 text-white">Restantes</h3>

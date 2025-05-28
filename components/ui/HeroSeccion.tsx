@@ -1,17 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Calendar, MapPin, Clock, Menu, X } from "lucide-react"
+import { Calendar, MapPin, Clock } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 
-export default function Component() {
+export default function HeroSection() {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
   })
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Fecha de la próxima carrera (ejemplo: 15 días desde ahora)
   const nextRaceDate = new Date()
@@ -43,8 +42,18 @@ export default function Component() {
     })
   }
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: "smooth",
+        block: "start"
+      })
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden pt-20">
       {/* Winner Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -70,72 +79,6 @@ export default function Component() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="relative z-20 flex items-center justify-between p-4 lg:px-12 lg:py-6">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-white rounded-sm"></div>
-          </div>
-          <span className="text-xl font-bold">Turismo Pista 1100</span>
-        </div>
-
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center space-x-8 text-bold font-semibold">
-          <a href="#" className="hover:text-red-500 transition-colors">
-            Inicio
-          </a>
-          <a href="#" className="hover:text-red-500 transition-colors">
-            Campeonato
-          </a>
-          <a href="#" className="hover:text-red-500 transition-colors">
-            Pilotos
-          </a>
-          <a href="#" className="hover:text-red-500 transition-colors">
-            Imágenes
-          </a>
-          <a href="#" className="hover:text-red-500 transition-colors">
-            Contacto
-          </a>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button className="hidden sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base">
-            CONTACTANOS
-          </button>
-
-          {/* Mobile menu button */}
-          <button className="lg:hidden p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-sm border-t border-gray-800 lg:hidden">
-            <div className="flex flex-col space-y-4 p-6">
-              <a href="#" className="hover:text-red-500 transition-colors">
-                Inicio
-              </a>
-              <a href="#" className="hover:text-red-500 transition-colors">
-                Campeonato
-              </a>
-              <a href="#" className="hover:text-red-500 transition-colors">
-                Pilotos
-              </a>
-              <a href="#" className="hover:text-red-500 transition-colors">
-                Imágenes
-              </a>
-              <a href="#" className="hover:text-red-500 transition-colors">
-                Contacto
-              </a>
-              <button className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg transition-colors text-left">
-                CONTACTANOS
-              </button>
-            </div>
-          </div>
-        )}
-      </nav>
-
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col xl:flex-row items-center justify-between px-4 sm:px-6 lg:px-12 py-8 lg:py-20 gap-8 xl:gap-12">
         {/* Left Content */}
@@ -155,10 +98,16 @@ export default function Component() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center xl:justify-start">
-            <button className="bg-red-600 hover:bg-red-700 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold transition-colors text-sm lg:text-base">
+            <button 
+              onClick={() => scrollToSection("calendario")}
+              className="bg-red-600 hover:bg-red-700 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold transition-colors text-sm lg:text-base"
+            >
               VER CALENDARIO
             </button>
-            <button className="border border-white/20 hover:border-red-500 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold transition-colors text-sm lg:text-base">
+            <button 
+              onClick={() => scrollToSection("campeonato")}
+              className="border border-white/20 hover:border-red-500 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-semibold transition-colors text-sm lg:text-base"
+            >
               CONOCER PILOTOS
             </button>
           </div>

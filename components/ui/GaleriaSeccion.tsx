@@ -1,18 +1,18 @@
 "use client"
 import { useState } from "react"
-import { Camera, Calendar, Trophy, Users, Clock, Zap } from "lucide-react"
+import { Camera, Calendar, Trophy, Users, Clock, Zap, Flag } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
-export default function ImageGalleryBento() {
+export default function GallerySection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
 
   const galleryImages = [
     {
       id: 1,
       title: "Podio Fecha 1",
-      description: "Celebración del podio en Buenos Aires",
-      image: "/images/ganadorfecha1.jpg",
+      description: "Celebración del podio en Buenos Aires con los tres mejores pilotos de la temporada",
+      image: "/images/bento1.jpg",
       category: "Podio",
       date: "15 Mar 2024",
     },
@@ -20,7 +20,7 @@ export default function ImageGalleryBento() {
       id: 2,
       title: "Largada Épica",
       description: "Momento de la largada en Córdoba",
-      image: "/images/ganador-ultima-fecha.jpg",
+      image: "/images/bento2.jpg",
       category: "Carrera",
       date: "12 Abr 2024",
     },
@@ -28,7 +28,7 @@ export default function ImageGalleryBento() {
       id: 3,
       title: "Vuelta Rápida",
       description: "Record de vuelta en Mendoza",
-      image: "/images/ganador-ultima-fecha.jpg",
+      image: "/images/bento9.jpg",
       category: "Acción",
       date: "10 May 2024",
     },
@@ -36,7 +36,7 @@ export default function ImageGalleryBento() {
       id: 4,
       title: "Boxes en Acción",
       description: "Estrategia en los pits",
-      image: "/images/ganador-ultima-fecha.jpg",
+      image: "/images/bento8.jpg",
       category: "Pits",
       date: "14 Jun 2024",
     },
@@ -44,7 +44,7 @@ export default function ImageGalleryBento() {
       id: 5,
       title: "Celebración",
       description: "Festejo del campeón",
-      image: "/images/ganador-ultima-fecha.jpg",
+      image: "/images/bento3.jpg",
       category: "Victoria",
       date: "20 Jul 2024",
     },
@@ -52,9 +52,33 @@ export default function ImageGalleryBento() {
       id: 6,
       title: "Fans TP1100",
       description: "La hinchada en las tribunas",
-      image: "/images/ganador-ultima-fecha.jpg",
+      image: "/images/bento4.jpg",
       category: "Ambiente",
       date: "18 Ago 2024",
+    },
+    {
+      id: 7,
+      title: "Adelantamiento Épico",
+      description: "Maniobra decisiva que definió el campeonato en la recta principal del autódromo",
+      image: "/images/bento5.jpg",
+      category: "Acción",
+      date: "22 Sep 2024",
+    },
+    {
+      id: 8,
+      title: "Mecánicos Trabajando",
+      description: "Equipo técnico preparando el auto",
+      image: "/images/bento6.jpg",
+      category: "Pits",
+      date: "05 Oct 2024",
+    },
+    {
+      id: 9,
+      title: "Bandera a Cuadros",
+      description: "Final de carrera en el autódromo",
+      image: "/images/bento7.jpg",
+      category: "Carrera",
+      date: "15 Nov 2024",
     },
   ]
 
@@ -63,7 +87,7 @@ export default function ImageGalleryBento() {
       case "Podio":
         return { color: "bg-yellow-600", icon: <Trophy className="w-3 h-3" /> }
       case "Carrera":
-        return { color: "bg-red-600", icon: <Zap className="w-3 h-3" /> }
+        return { color: "bg-red-600", icon: <Flag className="w-3 h-3" /> }
       case "Acción":
         return { color: "bg-red-500", icon: <Zap className="w-3 h-3" /> }
       case "Pits":
@@ -78,29 +102,55 @@ export default function ImageGalleryBento() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-12 relative">
+    <div className="min-h-screen bg-black text-white py-20 px-4 sm:px-6 lg:px-12 relative">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl lg:text-6xl font-bold mb-4">
             Galería
-            <span className="block text-red-500">TP1100</span>
+            <span className="block text-red-500">Turismo Pista 1100</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Los mejores momentos del campeonato capturados en imágenes
           </p>
         </div>
 
-        {/* Symmetric Grid - 6 photos (2 rows x 3 columns) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        {/* Bento Grid - 9 photos with different sizes */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto auto-rows-[200px]">
           {galleryImages.map((image, index) => {
             const categoryConfig = getCategoryConfig(image.category)
             const isHovered = hoveredCard === image.id
 
+            // Define different sizes for bento layout
+            const getBentoSize = (index: number) => {
+              switch (index) {
+                case 0:
+                  return "col-span-2 row-span-2" // Large card (top-left)
+                case 1:
+                  return "col-span-1 row-span-1" // Medium card (top-center)
+                case 2:
+                  return "col-span-1 row-span-1" // Medium card (top-right)
+                case 3:
+                  return "col-span-1 row-span-1" // Medium card (bottom-left)
+                case 4:
+                  return "col-span-1 row-span-1" // Medium card (bottom-center-right)
+                case 5:
+                  return "col-span-1 row-span-1" // Medium card (bottom-left-2)
+                case 6:
+                  return "col-span-1 row-span-1" // Medium card (bottom-center-left-2)
+                case 7:
+                  return "col-span-1 row-span-1" // Medium card (bottom-center-right-2)
+                case 8:
+                  return "col-span-1 row-span-1" // Medium card (bottom-right)
+                default:
+                  return "col-span-1 row-span-1"
+              }
+            }
+
             return (
               <Card
                 key={image.id}
-                className="bg-black border-2 border-red-500/20 hover:border-red-500 backdrop-blur-sm overflow-hidden group hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/20 cursor-pointer relative aspect-square"
+                className={`bg-black border-2 py-0 border-red-500/20 hover:border-red-500 backdrop-blur-sm overflow-hidden group hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-red-500/20 cursor-pointer relative ${getBentoSize(index)}`}
                 onMouseEnter={() => setHoveredCard(image.id)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
@@ -140,8 +190,16 @@ export default function ImageGalleryBento() {
 
                   {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-lg font-bold text-white mb-1">{image.title}</h3>
-                    <p className="text-sm text-gray-300 line-clamp-2">{image.description}</p>
+                    <h3
+                      className={`font-bold text-white mb-1 ${getBentoSize(index).includes("col-span-2") ? "text-lg" : "text-sm"}`}
+                    >
+                      {image.title}
+                    </h3>
+                    <p
+                      className={`text-gray-300 line-clamp-2 ${getBentoSize(index).includes("col-span-2") ? "text-sm" : "text-xs"}`}
+                    >
+                      {image.description}
+                    </p>
                   </div>
 
                   {/* Red accent line */}
@@ -151,30 +209,10 @@ export default function ImageGalleryBento() {
             )
           })}
         </div>
-
-        {/* Stats Section */}
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-red-500 mb-2">150+</div>
-            <div className="text-sm text-gray-400">Fotos de Carrera</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">24</div>
-            <div className="text-sm text-gray-400">Pilotos Fotografiados</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-red-500 mb-2">10</div>
-            <div className="text-sm text-gray-400">Circuitos Visitados</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">5K+</div>
-            <div className="text-sm text-gray-400">Fans en Redes</div>
-          </div>
-        </div>
       </div>
 
       {/* Decorative racing elements */}
-      <div className="absolute bottom-20 left-10 opacity-5 pointer-events-none hidden lg:block">
+      <div className="absolute bottom-5 left-10 opacity-50 pointer-events-none hidden lg:block">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 border-2 border-red-500 rounded-full"></div>
           <div className="w-16 h-1 bg-red-500"></div>
