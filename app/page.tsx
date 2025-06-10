@@ -57,7 +57,6 @@ async function getLatestImages(): Promise<GalleryImage[]> {
       console.error('Error fetching latest images:', error.message);
       return [];
     }
-
     const formattedImages = data?.map((img) => ({
       id: img.id,
       title: img.titulo,
