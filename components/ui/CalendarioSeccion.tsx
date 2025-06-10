@@ -112,7 +112,7 @@ export default function CalendarSection({ races, stats }: CalendarSectionProps) 
                   <div className="flex items-center">
                     <div className="relative w-16 h-16 flex-shrink-0">
                       <img
-                        src="/images/ganador-ultima-fecha.jpg"
+                        src="/media/p1champ.jpg"
                         alt={race.nombre}
                         className="w-full h-full object-cover ml-2 rounded-sm"
                       />
