@@ -1,4 +1,5 @@
 // app/page.tsx
+
 import { supabase } from '@/lib/utils';
 import Navigation from '@/components/layout/Navigation';
 import HeroSection from '@/components/ui/HeroSeccion';
@@ -6,8 +7,18 @@ import ChampionshipSection from '@/components/ui/CampeonatoSeccion';
 import CalendarSection from '@/components/ui/CalendarioSeccion';
 import GallerySection from '@/components/ui/GaleriaSeccion';
 import Footer from '@/components/layout/Footer';
-import {parseDate} from '@/lib/utils'
-import { RaceWithDetails, ChampionshipWithStandings, ChampionshipStats, NextRaceData } from '@/types/championship';
+import { parseDate } from '@/lib/utils';
+import {
+  RaceWithDetails,
+  ChampionshipWithStandings,
+  ChampionshipStats,
+  NextRaceData,
+  Campeonato,
+  Circuito,
+  Piloto,
+  ChampionshipStanding,
+  PilotoCampeonato
+} from '@/types/championship';
 
 // Función para obtener la próxima carrera
 async function getNextRace(): Promise<NextRaceData | null> {
@@ -26,21 +37,29 @@ async function getNextRace(): Promise<NextRaceData | null> {
       .gte('fecha_desde', today)
       .order('fecha_desde', { ascending: true })
       .limit(1)
-      .single();
+      .single() as unknown as { data: {
+        id: string;
+        nombre: string;
+        fecha_desde: string;
+        fecha_hasta?: string;
+        campeonato?: Campeonato;
+        circuito?: Circuito;
+      }, error: any };
 
     if (error) {
       console.error('Error fetching next race:', error.message);
       return null;
     }
+
     if (data) {
       return {
         id: data.id,
         nombre: data.nombre,
         fecha_desde: data.fecha_desde,
         fecha_hasta: data.fecha_hasta || undefined,
-        campeonato: Array.isArray(data.campeonato) ? data.campeonato[0] : data.campeonato,
-        circuitoNombre: Array.isArray(data.circuito) ? (data.circuito[0]?.nombre || '') : (data.circuito?.nombre || ''),
-        circuitoDistancia: Array.isArray(data.circuito) ? (data.circuito[0]?.distancia || '') : (data.circuito?.distancia || ''),
+        campeonato: data.campeonato,
+        circuitoNombre: data.circuito?.nombre || '',
+        circuitoDistancia: data.circuito?.distancia || undefined,
       };
     }
     return null;
@@ -51,7 +70,6 @@ async function getNextRace(): Promise<NextRaceData | null> {
 }
 
 // Función para obtener todas las fechas del año actual
-// app/page.tsx
 async function getAllRaces(): Promise<RaceWithDetails[]> {
   try {
     const currentYear = new Date().getFullYear();
@@ -68,7 +86,7 @@ async function getAllRaces(): Promise<RaceWithDetails[]> {
         carrera_final(id, piloto_id, posicion, puntos, presente, piloto:pilotos(nombre, pais))
       `)
       .eq('campeonato.anio', currentYear)
-      .order('fecha_desde', { ascending: true });
+      .order('fecha_desde', { ascending: true }) as unknown as { data: any[]; error: any };
 
     if (error) {
       console.error('Error fetching all races:', error.message);
@@ -88,7 +106,7 @@ async function getAllRaces(): Promise<RaceWithDetails[]> {
           status = 'live';
         }
 
-        const winnerEntry = race.carrera_final?.find(final => final.posicion === 1);
+        const winnerEntry = race.carrera_final?.find((final: any) => final.posicion === 1);
         const winner = winnerEntry?.piloto?.nombre || 'No disponible';
 
         return {
@@ -97,16 +115,16 @@ async function getAllRaces(): Promise<RaceWithDetails[]> {
           fecha_desde: race.fecha_desde,
           fecha_hasta: race.fecha_hasta || undefined,
           campeonato_id: race.campeonato_id,
-          campeonato: Array.isArray(race.campeonato) ? race.campeonato[0] : race.campeonato,
-          circuitoNombre: Array.isArray(race.circuito) ? (race.circuito[0]?.nombre || 'Circuito no especificado') : (race.circuito?.nombre || 'Circuito no especificado'),
-          circuitoDistancia: Array.isArray(race.circuito) ? (race.circuito[0]?.distancia || undefined) : (race.circuito?.distancia || undefined),
+          campeonato: race.campeonato,
+          circuitoNombre: race.circuito?.nombre || 'Circuito no especificado',
+          circuitoDistancia: race.circuito?.distancia || undefined,
           status,
           carrera_final: (race.carrera_final || []).map((item: any) => ({
             ...item,
             fecha_id: race.id,
             piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
           })),
-          winner, // Add the winner field
+          winner,
         } as RaceWithDetails;
       });
 
@@ -137,7 +155,7 @@ async function getCurrentChampionship(): Promise<ChampionshipWithStandings | nul
         )
       `)
       .eq('anio', currentYear)
-      .single();
+      .single() as unknown as { data: Campeonato & { posiciones_campeonato: { id: string; puntos_totales: number; piloto_id: string; piloto: Piloto | Piloto[]; }[] }, error: any };
 
     if (championshipError) {
       console.error('Error fetching championship:', championshipError.message);
@@ -148,27 +166,24 @@ async function getCurrentChampionship(): Promise<ChampionshipWithStandings | nul
       return null;
     }
 
-    // Fetch pilotos_campeonato separately
     const { data: pilotosCampeonatoData, error: pilotosCampeonatoError } = await supabase
       .from('pilotos_campeonato')
       .select(`
         piloto_id,
         numero_auto
       `)
-      .eq('campeonato_id', championshipData.id);
+      .eq('campeonato_id', championshipData.id) as unknown as { data: PilotoCampeonato[]; error: any };
 
     if (pilotosCampeonatoError) {
       console.error('Error fetching pilotos_campeonato:', pilotosCampeonatoError.message);
       return null;
     }
 
-    // Map pilotos_campeonato data to a lookup object
     const numeroAutoMap = new Map(
       (pilotosCampeonatoData || []).map(item => [item.piloto_id, item.numero_auto])
     );
 
-    // Combine data
-    const sortedPositions = (championshipData.posiciones_campeonato || [])
+    const sortedPositions: ChampionshipStanding[] = (championshipData.posiciones_campeonato || [])
       .sort((a, b) => (b.puntos_totales || 0) - (a.puntos_totales || 0))
       .map((pos, index) => ({
         position: index + 1,
@@ -193,8 +208,7 @@ async function getCurrentChampionship(): Promise<ChampionshipWithStandings | nul
 async function getChampionshipStats(): Promise<ChampionshipStats> {
   try {
     const currentYear = new Date().getFullYear();
-    
-    // Obtener total de carreras
+
     const { count: totalRaces } = await supabase
       .from('fechas')
       .select(`
@@ -203,7 +217,6 @@ async function getChampionshipStats(): Promise<ChampionshipStats> {
       `, { count: 'exact', head: true })
       .eq('campeonato.anio', currentYear);
 
-    // Obtener carreras completadas
     const today = new Date().toISOString().split('T')[0];
     const { count: completedRaces } = await supabase
       .from('fechas')
@@ -214,7 +227,6 @@ async function getChampionshipStats(): Promise<ChampionshipStats> {
       .eq('campeonato.anio', currentYear)
       .lt('fecha_desde', today);
 
-    // Obtener pilotos activos
     const { count: activePilots } = await supabase
       .from('pilotos_campeonato')
       .select(`
@@ -261,7 +273,7 @@ async function getLatestRace(): Promise<RaceWithDetails | null> {
       .lte('fecha_desde', today)
       .order('fecha_desde', { ascending: false })
       .limit(1)
-      .single();
+      .single() as unknown as { data: any; error: any };
 
     if (error) {
       console.error('Error fetching latest race:', error.message);
@@ -277,7 +289,7 @@ async function getLatestRace(): Promise<RaceWithDetails | null> {
       if (raceDate.toDateString() === todayDate.toDateString()) {
         status = 'live';
       }
-      console.log('fetch de mega data',data);
+
       return {
         id: data.id,
         nombre: data.nombre,
@@ -323,14 +335,6 @@ export default async function HomePage() {
     getChampionshipStats(),
     getLatestRace(),
   ]);
-
-  console.log('Server data loaded:', {
-    nextRace: !!nextRace,
-    racesCount: allRaces.length,
-    championship: !!championship,
-    stats,
-    latestRace: !!latestRace,
-  });
 
   return (
     <div className="min-h-screen bg-black">

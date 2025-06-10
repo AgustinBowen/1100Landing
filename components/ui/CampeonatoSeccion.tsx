@@ -74,7 +74,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                     <CardContent className="p-0">
                       <div className="relative">
                         <img
-                          src="/images/p2champ.jpg"
+                          src="/media/p2champ.jpg"
                           alt={championship?.standings[1]?.piloto.nombre}
                           className="w-full h-56 object-cover"
                         />
@@ -105,7 +105,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                     <CardContent className="p-0">
                       <div className="relative">
                         <img
-                          src="/images/p1champ.jpg"
+                          src="/media/p1champ.jpg"
                           alt={championship?.standings[0]?.piloto.nombre}
                           className="w-full h-64 object-cover"
                         />
@@ -136,7 +136,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                     <CardContent className="p-0">
                       <div className="relative">
                         <img
-                          src="/images/p3champ.jpg"
+                          src="/media/p3champ.jpg"
                           alt={championship?.standings[2]?.piloto.nombre}
                           className="w-full h-52 object-cover"
                         />

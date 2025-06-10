@@ -92,13 +92,13 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
     <div className="min-h-screen bg-black text-white relative overflow-hidden pt-20">
       <div className="absolute inset-0 z-0">
         <video
-          className="w-full h-full object-cover object-center opacity-30"
+          className="w-full h-full object-cover object-center opacity-50"
           autoPlay
           loop
           muted
           playsInline
         >
-          <source src="/images/HeroVideo.mp4" type="video/mp4" />
+          <source src="/media/HeroVideo.mp4" type="video/mp4" />
           Tu navegador no soporta videos HTML5.
         </video>
         <div className="absolute inset-0 bg-black/60"></div>
@@ -216,11 +216,11 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
       <div className="relative z-10 px-4 sm:px-6 lg:px-12 pb-8 lg:pb-12">
         <div className="grid grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-8">
           <div className="text-center lg:text-left">
-            <div className="text-2xl sm:text-3xl font-bold text-red-500 mb-1">{stats.activePilots}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-red-500 mb-1">+45</div>
             <div className="text-sm text-gray-400">Pilotos</div>
           </div>
           <div className="text-center lg:text-left">
-            <div className="text-2xl sm:text-3xl font-bold text-red-500 mb-1">{stats.totalRaces}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-red-500 mb-1">10</div>
             <div className="text-sm text-gray-400">Carreras</div>
           </div>
           <div className="text-center lg:text-left">
