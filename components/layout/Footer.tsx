@@ -25,28 +25,16 @@ export default function Footer() {
               {/* Social Media */}
               <div className="flex space-x-4">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/turismopista1100/?locale=es_LA"
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                 >
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/turismopista1100/"
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                 >
                   <Instagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
-                >
-                  <Youtube className="w-5 h-5" />
                 </a>
               </div>
             </div>
@@ -91,7 +79,7 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Contact Info */}
+            {/* Contact Info 
             <div>
               <h3 className="text-lg font-bold mb-4">Contacto</h3>
               <ul className="space-y-3">
@@ -112,9 +100,9 @@ export default function Footer() {
                   </span>
                 </li>
               </ul>
-            </div>
+            </div>*/}
 
-            {/* Newsletter */}
+            {/* Newsletter 
             <div>
               <h3 className="text-lg font-bold mb-4">Newsletter</h3>
               <p className="text-red-100 mb-4">Recibe las últimas noticias y resultados del campeonato.</p>
@@ -128,7 +116,7 @@ export default function Footer() {
                   Suscribirse
                 </button>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
 
@@ -137,7 +125,7 @@ export default function Footer() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div>
-                <div className="text-2xl font-bold text-white mb-1">24</div>
+                <div className="text-2xl font-bold text-white mb-1">+45</div>
                 <div className="text-sm text-red-200">Pilotos</div>
               </div>
               <div>
@@ -145,11 +133,7 @@ export default function Footer() {
                 <div className="text-sm text-red-200">Fechas</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-white mb-1">8</div>
-                <div className="text-sm text-red-200">Circuitos</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-white mb-1">2024</div>
+                <div className="text-2xl font-bold text-white mb-1">2025</div>
                 <div className="text-sm text-red-200">Temporada</div>
               </div>
             </div>
