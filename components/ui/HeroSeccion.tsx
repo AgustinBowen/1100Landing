@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Calendar, MapPin, Clock } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroSectionProps } from "@/types/championship";
+import { parseDate } from "@/lib/utils";
 
 export default function HeroSection({ raceData, stats }: HeroSectionProps) {
   const [nextRaceDate, setNextRaceDate] = useState<Date | null>(null);
@@ -18,14 +19,14 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
 
   useEffect(() => {
     if (raceData) {
-      const startDateTime = new Date(raceData.fecha_desde);
-      const endDateTime = raceData.fecha_hasta ? new Date(raceData.fecha_hasta) : null;
+      const startDateTime = parseDate(raceData.fecha_desde);
+      const endDateTime = raceData.fecha_hasta ? parseDate(raceData.fecha_hasta) : null;
 
       setNextRaceDate(startDateTime);
       setEndRaceDate(endDateTime);
       setRaceName(raceData.nombre);
       setCircuitoNombre(raceData.circuitoNombre || 'Circuito no especificado');
-      setCircuitoDistancia(raceData.circuitoDistancia);
+      setCircuitoDistancia(raceData.circuitoDistancia || null);
       setIsLoading(false);
     } else {
       setIsRaceOver(true);
@@ -67,16 +68,16 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
     const startMonth = startDate.toLocaleDateString("es-ES", optionsMonth);
 
     if (!endDate) {
-      return `${startDay} ${startMonth}`;
+      return `${startDay} de ${startMonth}`;
     }
 
     const endDay = endDate.toLocaleDateString("es-ES", optionsDay);
     const endMonth = endDate.toLocaleDateString("es-ES", optionsMonth);
 
     if (startDate.getMonth() === endDate.getMonth()) {
-      return `${startDay} - ${endDay} ${startMonth}`;
+      return `${startDay} - ${endDay} de ${startMonth}`;
     } else {
-      return `${startDay} ${startMonth} - ${endDay} ${endMonth}`;
+      return `${startDay} de ${startMonth} - ${endDay} de ${endMonth}`;
     }
   };
 
@@ -90,11 +91,16 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden pt-20">
       <div className="absolute inset-0 z-0">
-        <img
-          src="/images/ganador-ultima-fecha.jpg"
-          alt="Ganador última carrera"
-          className="w-full h-full object-cover opacity-30"
-        />
+        <video
+          className="w-full h-full object-cover object-center opacity-30"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/images/HeroVideo.mp4" type="video/mp4" />
+          Tu navegador no soporta videos HTML5.
+        </video>
         <div className="absolute inset-0 bg-black/60"></div>
       </div>
 
@@ -145,7 +151,9 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-red-500" />
-                <h3 className="text-lg font-semibold text-white">Próxima Carrera: {raceName}</h3>
+                <h3 className="text-lg font-semibold text-white">
+                  {raceName ? `Próxima Carrera: ${raceName}` : 'Próxima Carrera'}
+                </h3>
               </div>
 
               {isLoading ? (
@@ -184,7 +192,9 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center gap-3">
                       <Calendar className="w-4 h-4 text-red-500 flex-shrink-0" />
-                      <span className="text-sm text-gray-300">{nextRaceDate && formatDateRange(nextRaceDate, endRaceDate)}</span>
+                      <span className="text-sm text-gray-300">
+                        {nextRaceDate ? formatDateRange(nextRaceDate, endRaceDate) : 'Fecha no disponible'}
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-4 h-4 text-red-500 flex-shrink-0" />

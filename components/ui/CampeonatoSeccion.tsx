@@ -6,6 +6,7 @@ import { ChevronRight, Trophy, Medal, Award } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ChampionshipSectionProps } from "@/types/championship";
+import { formatearTiempo } from "@/lib/utils";
 
 export default function ChampionshipSection({ championship, stats, latestRace }: ChampionshipSectionProps) {
   const [activeTab, setActiveTab] = useState("drivers");
@@ -73,7 +74,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                     <CardContent className="p-0">
                       <div className="relative">
                         <img
-                          src="/images/p2champ.png"
+                          src="/images/p2champ.jpg"
                           alt={championship?.standings[1]?.piloto.nombre}
                           className="w-full h-56 object-cover"
                         />
@@ -104,7 +105,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                     <CardContent className="p-0">
                       <div className="relative">
                         <img
-                          src="/images/p3champ.jpg"
+                          src="/images/p1champ.jpg"
                           alt={championship?.standings[0]?.piloto.nombre}
                           className="w-full h-64 object-cover"
                         />
@@ -166,7 +167,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
             <div>
               <h2 className="text-2xl font-bold mb-6">Clasificación Completa</h2>
               <Card className="bg-[#080808] shadow-2xl shadow-red-500/20 border-red-500/20 border-2 py-0 overflow-hidden">
-                <CardContent className="p-0">
+                <CardContent className="p-0 text-sm">
                   <div className="space-y-0">
                     {championship?.standings.map((driver, index) => (
                       <div
@@ -183,7 +184,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <span className="text-lg font-bold text-red-500">{driver.puntos}</span>
+                            <span className="text-sm font-bold text-red-500">{driver.puntos}</span>
                             <span className="text-sm text-gray-400 ml-1">PTS</span>
                           </div>
                           <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -208,31 +209,34 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                   : 'Fecha no disponible'}
               </p>
             </div>
-            <Card className="bg-black/90 border-red-500/20 py-0 overflow-hidden">
+            <Card className="bg-[#080808] shadow-2xl shadow-red-500/20 border-red-500/20 border-2 py-0 overflow-hidden">
               <CardContent className="p-0">
                 <div className="space-y-0">
                   {latestRace?.carrera_final
                     ?.sort((a, b) => (a.posicion || 999) - (b.posicion || 999))
-                    .slice(0, 8)
                     .map((result, index) => (
                       <div
                         key={result.id}
                         className={`flex items-center justify-between p-4 border-b border-red-500/10 last:border-b-0 hover:bg-red-500/10 transition-colors ${
-                          index < 3 ? "bg-red-500/5" : ""
+                          index < 3 ? "bg-red-500/70 hover:bg-red-500/80 " : ""
                         }`}
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 text-sm">
                           <div className="w-8 flex justify-center">{getPositionIcon(result.posicion || index + 1)}</div>
                           <div>
-                            <h3 className="font-semibold text-white">{result.piloto?.nombre}</h3>
+                            <h3  className="font-semibold text-white">{result.piloto?.nombre}</h3>
                           </div>
                         </div>
                         <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <span className="text-lg font-bold text-red-500">+{result.puntos}</span>
-                            <span className="text-sm text-gray-400 ml-1">PTS</span>
+                          <div className="text-right flex gap-4">
+                            {result.tiempo ? (
+                              <span className="text-sm font-bold text-white/85">
+                                {formatearTiempo(result.tiempo.toString())}
+                              </span>
+                            ) : null}
+                            <span className="text-sm font-bold text-white/85">{result.excluido? "EX":""}</span>
+                            <span className="text-sm font-bold text-white/85">{result.vueltas ? result.vueltas + "v" : "0"}</span>
                           </div>
-                          <ChevronRight className="w-5 h-5 text-gray-400" />
                         </div>
                       </div>
                     )) || (
@@ -243,13 +247,6 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
             </Card>
           </div>
         )}
-
-        {/* View Full Button */}
-        <div className="text-center mt-8">
-          <button className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold transition-colors">
-            VER CLASIFICACIÓN COMPLETA
-          </button>
-        </div>
       </div>
     </div>
   );

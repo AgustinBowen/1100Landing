@@ -56,6 +56,8 @@ export interface SerieClasificatoria {
   posicion?: number;
   puntos: number;
   piloto?: Piloto;
+  tiempo?:number;
+  vueltas?:number;
 }
 
 export interface CarreraFinal {
@@ -66,6 +68,9 @@ export interface CarreraFinal {
   puntos: number;
   presente: boolean;
   piloto?: Piloto;
+  vueltas?:number;
+  tiempo?:number;
+  excluido?:boolean;
 }
 
 export interface PilotoCampeonato {

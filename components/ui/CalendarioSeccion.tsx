@@ -6,10 +6,11 @@ import { Calendar, MapPin, Trophy, Clock, Flag, CheckCircle, Users } from 'lucid
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CalendarSectionProps } from "@/types/championship";
+import { parseDate } from "@/lib/utils";
 
 export default function CalendarSection({ races, stats }: CalendarSectionProps) {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-
+  console.log("stats recibidas",stats)
   const getStatusConfig = (status: string) => {
     switch (status) {
       case "completed":
@@ -56,12 +57,13 @@ export default function CalendarSection({ races, stats }: CalendarSectionProps) 
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date = parseDate(dateString);
     return date.toLocaleDateString("es-ES", {
       day: "numeric",
       month: "short",
     });
   };
+
 
   const getLiveRace = () => {
     return races.find(race => race.status === 'live');
@@ -110,14 +112,13 @@ export default function CalendarSection({ races, stats }: CalendarSectionProps) 
                   <div className="flex items-center">
                     <div className="relative w-16 h-16 flex-shrink-0">
                       <img
-                        src="/placeholder.svg?height=200&width=400"
+                        src="/images/ganador-ultima-fecha.jpg"
                         alt={race.nombre}
                         className="w-full h-full object-cover ml-2 rounded-sm"
                       />
                       <div
-                        className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 transition-all duration-500 ${
-                          isHovered ? "translate-x-full" : "-translate-x-full"
-                        }`}
+                        className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 transition-all duration-500 ${isHovered ? "translate-x-full" : "-translate-x-full"
+                          }`}
                       ></div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                       <div className="absolute bottom-1 right-1">
