@@ -50,10 +50,7 @@ export default function Navigation() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b-[1px] border-[#242424]">
       <div className="flex items-center justify-between p-4 lg:px-12 lg:py-6">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-white rounded-sm"></div>
-          </div>
-          <span className="text-xl font-bold text-white">Turismo Pista 1100</span>
+          <a href="/"><span className="text-xl font-bold text-white hover:text-red-500">Turismo Pista 1100</span></a>
         </div>
 
         {/* Desktop Navigation */}

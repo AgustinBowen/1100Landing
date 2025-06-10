@@ -1,104 +1,76 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Camera, Calendar, Trophy, Users, Clock, Zap, Flag } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { GalleryImage,GallerySectionProps } from "@/types/championship"
 
-export default function GallerySection() {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+export default function GallerySection({ images }: GallerySectionProps) {
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [displayedImages, setDisplayedImages] = useState<GalleryImage[]>(images.slice(0, 9));
 
-  const galleryImages = [
-    {
-      id: 1,
-      title: "Podio Fecha 1",
-      description: "Celebración del podio en Buenos Aires con los tres mejores pilotos de la temporada",
-      image: "/media/bento1.jpg",
-      category: "Podio",
-      date: "15 Mar 2024",
-    },
-    {
-      id: 2,
-      title: "Largada Épica",
-      description: "Momento de la largada en Córdoba",
-      image: "/media/bento2.jpg",
-      category: "Carrera",
-      date: "12 Abr 2024",
-    },
-    {
-      id: 3,
-      title: "Vuelta Rápida",
-      description: "Record de vuelta en Mendoza",
-      image: "/media/bento9.jpg",
-      category: "Acción",
-      date: "10 May 2024",
-    },
-    {
-      id: 4,
-      title: "Boxes en Acción",
-      description: "Estrategia en los pits",
-      image: "/media/bento8.jpg",
-      category: "Pits",
-      date: "14 Jun 2024",
-    },
-    {
-      id: 5,
-      title: "Celebración",
-      description: "Festejo del campeón",
-      image: "/media/bento3.jpg",
-      category: "Victoria",
-      date: "20 Jul 2024",
-    },
-    {
-      id: 6,
-      title: "Fans TP1100",
-      description: "La hinchada en las tribunas",
-      image: "/media/bento4.jpg",
-      category: "Ambiente",
-      date: "18 Ago 2024",
-    },
-    {
-      id: 7,
-      title: "Adelantamiento Épico",
-      description: "Maniobra decisiva que definió el campeonato en la recta principal del autódromo",
-      image: "/media/bento5.jpg",
-      category: "Acción",
-      date: "22 Sep 2024",
-    },
-    {
-      id: 8,
-      title: "Mecánicos Trabajando",
-      description: "Equipo técnico preparando el auto",
-      image: "/media/bento6.jpg",
-      category: "Pits",
-      date: "05 Oct 2024",
-    },
-    {
-      id: 9,
-      title: "Bandera a Cuadros",
-      description: "Final de carrera en el autódromo",
-      image: "/media/bento7.jpg",
-      category: "Carrera",
-      date: "15 Nov 2024",
-    },
-  ]
+  // Update displayed images when prop changes
+  useEffect(() => {
+    setDisplayedImages(images.slice(0, 9));
+  }, [images]);
+
+  // Rotate images every 10 seconds
+  useEffect(() => {
+    if (images.length <= 9) return; // No rotation needed if 9 or fewer images
+
+    const rotateImages = () => {
+      setDisplayedImages((prev) => {
+        // Get indices of current displayed images
+        const currentIds = prev.map((img) => img.id);
+        // Filter out displayed images and shuffle the rest
+        const availableImages = images
+          .filter((img) => !currentIds.includes(img.id))
+          .sort(() => Math.random() - 0.5);
+
+        // Replace a random subset of displayed images
+        const newDisplayed = [...prev];
+        const replaceCount = Math.min(3, availableImages.length); // Replace up to 3 images
+        for (let i = 0; i < replaceCount; i++) {
+          const randomIndex = Math.floor(Math.random() * prev.length);
+          if (availableImages[i]) {
+            newDisplayed[randomIndex] = availableImages[i];
+          }
+        }
+        return newDisplayed;
+      });
+    };
+
+    const interval = setInterval(rotateImages, 10000); // Rotate every 10 seconds
+    return () => clearInterval(interval);
+  }, [images]);
 
   const getCategoryConfig = (category: string) => {
     switch (category) {
       case "Podio":
-        return { color: "bg-yellow-600", icon: <Trophy className="w-3 h-3" /> }
+        return { color: "bg-yellow-600", icon: <Trophy className="w-3 h-3" /> };
       case "Carrera":
-        return { color: "bg-red-600", icon: <Flag className="w-3 h-3" /> }
+        return { color: "bg-red-600", icon: <Flag className="w-3 h-3" /> };
       case "Acción":
-        return { color: "bg-red-500", icon: <Zap className="w-3 h-3" /> }
+        return { color: "bg-red-500", icon: <Zap className="w-3 h-3" /> };
       case "Pits":
-        return { color: "bg-gray-600", icon: <Clock className="w-3 h-3" /> }
+        return { color: "bg-gray-600", icon: <Clock className="w-3 h-3" /> };
       case "Victoria":
-        return { color: "bg-green-600", icon: <Trophy className="w-3 h-3" /> }
+        return { color: "bg-green-600", icon: <Trophy className="w-3 h-3" /> };
       case "Ambiente":
-        return { color: "bg-blue-600", icon: <Users className="w-3 h-3" /> }
+        return { color: "bg-blue-600", icon: <Users className="w-3 h-3" /> };
       default:
-        return { color: "bg-gray-600", icon: <Camera className="w-3 h-3" /> }
+        return { color: "bg-gray-600", icon: <Camera className="w-3 h-3" /> };
     }
+  };
+
+  if (!displayedImages.length) {
+    return (
+      <div className="min-h-screen bg-black text-white py-20 px-4 sm:px-6 lg:px-12">
+        <div className="max-w-6xl mx-auto text-center text-gray-300">
+          No hay imágenes disponibles para la última fecha.
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -117,35 +89,34 @@ export default function GallerySection() {
 
         {/* Bento Grid - 9 photos with different sizes */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto auto-rows-[200px]">
-          {galleryImages.map((image, index) => {
-            const categoryConfig = getCategoryConfig(image.category)
-            const isHovered = hoveredCard === image.id
+          {displayedImages.map((image, index) => {
+            const isHovered = hoveredCard === image.id;
 
             // Define different sizes for bento layout
             const getBentoSize = (index: number) => {
               switch (index) {
                 case 0:
-                  return "col-span-2 row-span-2" // Large card (top-left)
+                  return "col-span-2 row-span-2"; // Large card (top-left)
                 case 1:
-                  return "col-span-1 row-span-1" // Medium card (top-center)
+                  return "col-span-1 row-span-1"; // Medium card (top-center)
                 case 2:
-                  return "col-span-1 row-span-1" // Medium card (top-right)
+                  return "col-span-1 row-span-1"; // Medium card (top-right)
                 case 3:
-                  return "col-span-1 row-span-1" // Medium card (bottom-left)
+                  return "col-span-1 row-span-1"; // Medium card (bottom-left)
                 case 4:
-                  return "col-span-1 row-span-1" // Medium card (bottom-center-right)
+                  return "col-span-1 row-span-1"; // Medium card (bottom-center-right)
                 case 5:
-                  return "col-span-1 row-span-1" // Medium card (bottom-left-2)
+                  return "col-span-1 row-span-1"; // Medium card (bottom-left-2)
                 case 6:
-                  return "col-span-1 row-span-1" // Medium card (bottom-center-left-2)
+                  return "col-span-1 row-span-1"; // Medium card (bottom-center-left-2)
                 case 7:
-                  return "col-span-1 row-span-1" // Medium card (bottom-center-right-2)
+                  return "col-span-1 row-span-1"; // Medium card (bottom-center-right-2)
                 case 8:
-                  return "col-span-1 row-span-1" // Medium card (bottom-right)
+                  return "col-span-1 row-span-1"; // Medium card (bottom-right)
                 default:
-                  return "col-span-1 row-span-1"
+                  return "col-span-1 row-span-1";
               }
-            }
+            };
 
             return (
               <Card
@@ -157,7 +128,7 @@ export default function GallerySection() {
                 <CardContent className="p-0 h-full relative">
                   {/* Image */}
                   <img
-                    src={image.image || "/placeholder.svg"}
+                    src={`${image.image}?w=800&h=600&c=fill` || "/placeholder.svg"}
                     alt={image.title}
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
@@ -171,14 +142,6 @@ export default function GallerySection() {
 
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-
-                  {/* Category Badge */}
-                  <div className="absolute top-3 left-3">
-                    <Badge className={`${categoryConfig.color} text-white text-xs px-2 py-1 flex items-center gap-1`}>
-                      {categoryConfig.icon}
-                      {image.category}
-                    </Badge>
-                  </div>
 
                   {/* Date */}
                   <div className="absolute top-3 right-3">
@@ -206,7 +169,7 @@ export default function GallerySection() {
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 via-white to-red-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                 </CardContent>
               </Card>
-            )
+            );
           })}
         </div>
       </div>
@@ -222,5 +185,5 @@ export default function GallerySection() {
         </div>
       </div>
     </div>
-  )
+  );
 }

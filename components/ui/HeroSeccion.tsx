@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar, MapPin, Clock } from 'lucide-react';
+import { Calendar, MapPin, Clock, Ruler } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { HeroSectionProps } from "@/types/championship";
 import { parseDate } from "@/lib/utils";
@@ -202,9 +202,30 @@ export default function HeroSection({ raceData, stats }: HeroSectionProps) {
                     </div>
                     {circuitoDistancia && (
                       <div className="flex items-center gap-3">
+                        <Ruler className="w-4 h-4 text-red-500 flex-shrink-0" />
                         <span className="text-sm text-gray-300">Distancia: {circuitoDistancia} km</span>
                       </div>
                     )}
+                    {/* Circuit Drawing */}
+                    <div className="bg-black/40 rounded-lg p-4 mb-4">
+                      <h4 className="text-sm font-medium text-white mb-3">Trazado del Circuito</h4>
+                      <div className="relative h-20 sm:h-24 bg-black rounded border-2 border-red-500/20">
+                        {/* Simple circuit representation */}
+                        <svg viewBox="0 0 200 80" className="w-full h-full">
+                          <path
+                            d="M20 40 Q20 20 40 20 L160 20 Q180 20 180 40 Q180 60 160 60 L40 60 Q20 60 20 40" 
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="3"
+                            strokeDasharray="5,5"
+                          />
+                          <circle cx="20" cy="40" r="3" fill="#ef4444" />
+                          <text x="25" y="45" fill="#ef4444" fontSize="8">
+                            START
+                          </text>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </>
               )}

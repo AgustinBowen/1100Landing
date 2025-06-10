@@ -17,9 +17,69 @@ import {
   Circuito,
   Piloto,
   ChampionshipStanding,
+  GalleryImage,
   PilotoCampeonato
 } from '@/types/championship';
 
+async function getLatestImages(): Promise<GalleryImage[]> {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+
+    // Obtener la fecha_desde más reciente
+    const { data: latestFecha, error: fechaError } = await supabase
+      .from('fechas')
+      .select('fecha_desde')
+      .lte('fecha_desde', today)
+      .order('fecha_desde', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (fechaError || !latestFecha) {
+      console.error('Error fetching latest fecha:', fechaError?.message || 'No fecha found');
+      return [];
+    }
+
+    // Obtener imágenes para la fecha más reciente
+    const { data, error } = await supabase
+      .from('imagenes')
+      .select(`
+        id,
+        titulo,
+        descripcion,
+        url_cloudinary,
+        fechas (fecha_desde)
+      `)
+      .eq('fechas.fecha_desde', latestFecha.fecha_desde)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error('Error fetching latest images:', error.message);
+      return [];
+    }
+
+    const formattedImages = data?.map((img) => ({
+      id: img.id,
+      title: img.titulo,
+      description: img.descripcion || '',
+      image: img.url_cloudinary,
+      date: new Date(
+        Array.isArray(img.fechas)
+          ? ((img.fechas[0] as { fecha_desde?: string })?.fecha_desde ?? '')
+          : ((img.fechas as { fecha_desde?: string })?.fecha_desde ?? '')
+      ).toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+    })) || [];
+
+    return formattedImages.sort(() => Math.random() - 0.5);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    return [];
+  }
+}
 // Función para obtener la próxima carrera
 async function getNextRace(): Promise<NextRaceData | null> {
   try {
@@ -328,12 +388,13 @@ async function getLatestRace(): Promise<RaceWithDetails | null> {
 }
 
 export default async function HomePage() {
-  const [nextRace, allRaces, championship, stats, latestRace] = await Promise.all([
+  const [nextRace, allRaces, championship, stats, latestRace,images] = await Promise.all([
     getNextRace(),
     getAllRaces(),
     getCurrentChampionship(),
     getChampionshipStats(),
     getLatestRace(),
+    getLatestImages()
   ]);
 
   return (
@@ -350,7 +411,7 @@ export default async function HomePage() {
           <CalendarSection races={allRaces} stats={stats} />
         </section>
         <section id="galeria">
-          <GallerySection />
+          <GallerySection images={images}/>
         </section>
         <section id="contacto">
           <Footer />
