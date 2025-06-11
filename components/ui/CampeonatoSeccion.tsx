@@ -45,17 +45,15 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
           <div className="bg-[#080808] border-2 rounded-lg p-1 backdrop-blur-sm border-red-500/20">
             <button
               onClick={() => setActiveTab("drivers")}
-              className={`px-6 py-3 rounded-md font-medium transition-all ${
-                activeTab === "drivers" ? "bg-red-600 text-white" : "text-gray-400 hover:text-white"
-              }`}
+              className={`px-6 py-3 rounded-md font-medium transition-all ${activeTab === "drivers" ? "bg-red-600 text-white" : "text-gray-400 hover:text-white"
+                }`}
             >
               PILOTOS
             </button>
             <button
               onClick={() => setActiveTab("lastrace")}
-              className={`px-6 py-3 rounded-md font-medium transition-all ${
-                activeTab === "lastrace" ? "bg-red-600 text-white" : "text-gray-400 hover:text-white"
-              }`}
+              className={`px-6 py-3 rounded-md font-medium transition-all ${activeTab === "lastrace" ? "bg-red-600 text-white" : "text-gray-400 hover:text-white"
+                }`}
             >
               ÚLTIMA CARRERA
             </button>
@@ -66,7 +64,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
           <div>
             {/* Featured Drivers */}
             <div className="mb-12">
-              <h2 className="text-2xl font-bold mb-6 text-center">Top 3 Pilotos</h2>
+              <h2 className="text-2xl font-bold mb-6 text-center">TOP 3 del campeonato</h2>
               <div className="flex flex-col md:flex-row items-end justify-center gap-6 max-w-4xl mx-auto">
                 {/* Segundo lugar - Izquierda */}
                 <div className="order-2 md:order-1 w-full md:w-80">
@@ -165,16 +163,26 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
 
             {/* Full Standings */}
             <div>
-              <h2 className="text-2xl font-bold mb-6">Clasificación Completa</h2>
-              <Card className="bg-[#080808] shadow-2xl shadow-red-500/20 border-red-500/20 border-2 py-0 overflow-hidden">
+              <h2 className="text-2xl font-extrabold mb-6">TOP 10 del campeonato</h2>
+              <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40  py-0 overflow-hidden">
                 <CardContent className="p-0 text-sm">
-                  <div className="space-y-0">
-                    {championship?.standings.map((driver, index) => (
+                  <div className="">
+                    {/* Encabezado sticky */}
+                    <div className="sticky top-0 z-10 bg-white/5 flex items-center justify-between px-4 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 flex justify-center text-white font-bold">#</div>
+                        <div className="text-white font-bold">Piloto</div>
+                      </div>
+                      <div className="flex items-center gap-8">
+                        <div className="text-white font-bold">N°Auto</div>
+                        <div className="text-white font-bold">Puntaje</div>
+                      </div>
+                    </div>
+                    {championship?.standings.slice(0, 5).map((driver, index) => (
                       <div
                         key={driver.position}
-                        className={`flex items-center justify-between p-4 border-b-2 border-red-500/10 last:border-b-0 hover:bg-red-500/10 transition-colors ${
-                          index < 1 ? "bg-red-500/5" : ""
-                        }`}
+                        className={`flex items-center justify-between p-4  hover:bg-red-500/50 transition-colors
+                          }`}
                       >
                         <div className="flex items-center gap-4">
                           <div className="w-8 flex justify-center">{getPositionIcon(driver.position)}</div>
@@ -182,60 +190,82 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                             <h3 className="font-semibold text-white">{driver.piloto.nombre}</h3>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right">
-                            <span className="text-sm font-bold text-red-500">{driver.puntos}</span>
-                            <span className="text-sm text-gray-400 ml-1">PTS</span>
-                          </div>
-                          <ChevronRight className="w-5 h-5 text-gray-400" />
+                        <div className="flex items-center gap-12">
+                          <>
+                            {driver.numeroAuto ? (
+                              <div className="text-white font-bold">#{driver.numeroAuto}</div>
+                            ) : null}
+                            <div className="text-right">
+                              <span className="text-sm font-bold text-red-500">{driver.puntos}</span>
+                              <span className="text-sm text-gray-400 ml-1">PTS</span>
+                            </div>
+                          </>
                         </div>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
+              <div className="mt-6 px-96">
+                <a href="#" className="font-semibold text-center sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white">Ver campeonato completo</a>
+              </div>
             </div>
           </div>
         )}
 
         {activeTab === "lastrace" && (
           <div>
-            <h2 className="text-2xl font-bold mb-6">Resultados - Última Carrera</h2>
+            <h2 className="text-2xl font-extrabold mb-6">TOP 10 - Última Carrera</h2>
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-2">{latestRace?.nombre || 'Sin datos'}</h3>
               <p className="text-gray-400">
                 {latestRace?.fecha_hasta
-                  ? new Date(latestRace.fecha_hasta).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+                  ? new Intl.DateTimeFormat('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    timeZone: 'UTC'
+                  }).format(new Date(latestRace.fecha_hasta))
                   : 'Fecha no disponible'}
               </p>
             </div>
-            <Card className="bg-[#080808] shadow-2xl shadow-red-500/20 border-red-500/20 border-2 py-0 overflow-hidden">
+            <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40  py-0 overflow-hidden">
               <CardContent className="p-0">
-                <div className="space-y-0">
+                <div className="sticky top-0 z-10 bg-white/5 flex items-center justify-between px-4 py-4 text-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="w-8 flex justify-center text-white font-bold">#</div>
+                    <div className="text-white font-bold">Piloto</div>
+                  </div>
+                  <div className="flex items-center gap-14">
+                    <div className="text-white font-bold">T ° Total</div>
+                    <div className="text-white font-bold">Vueltas</div>
+                  </div>
+                </div>
+                <div className="">
                   {latestRace?.carrera_final
                     ?.sort((a, b) => (a.posicion || 999) - (b.posicion || 999))
+                    .slice(0, 10)
                     .map((result, index) => (
                       <div
                         key={result.id}
-                        className={`flex items-center justify-between p-4 border-b border-red-500/10 last:border-b-0 hover:bg-red-500/10 transition-colors ${
-                          index < 3 ? "bg-red-500/70 hover:bg-red-500/80 " : ""
-                        }`}
+                        className={`flex items-center justify-between p-4  hover:bg-red-500/50 transition-colors
+                          }`}
                       >
                         <div className="flex items-center gap-4 text-sm">
                           <div className="w-8 flex justify-center">{getPositionIcon(result.posicion || index + 1)}</div>
                           <div>
-                            <h3  className="font-semibold text-white">{result.piloto?.nombre}</h3>
+                            <h3 className="font-semibold text-white">{result.piloto?.nombre}</h3>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                          <div className="text-right flex gap-4">
-                            {result.tiempo ? (
-                              <span className="text-sm font-bold text-white/85">
-                                {formatearTiempo(result.tiempo.toString())}
-                              </span>
-                            ) : null}
-                            <span className="text-sm font-bold text-white/85">{result.excluido? "EX":""}</span>
-                            <span className="text-sm font-bold text-white/85">{result.vueltas ? result.vueltas + "v" : "0"}</span>
+                        <div className="flex items-center gap-16">
+                          {result.tiempo ? (
+                            <span className="text-sm font-bold text-white">
+                              {formatearTiempo(result.tiempo.toString())}
+                            </span>
+                          ) : null}
+                          <div className="text-left mr-4">
+                            <span className="text-sm font-bold text-white">{result.excluido ? "EX" : ""}</span>
+                            <span className="text-sm font-bold text-white">{result.vueltas ? result.vueltas + "v" : "0"}</span>
                           </div>
                         </div>
                       </div>
@@ -245,6 +275,9 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                 </div>
               </CardContent>
             </Card>
+            <div className="mt-6 px-96">
+              <a href="#" className="font-semibold text-center sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white">Ver resultados completos</a>
+            </div>
           </div>
         )}
       </div>
