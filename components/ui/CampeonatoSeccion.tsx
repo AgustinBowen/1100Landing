@@ -163,7 +163,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
 
             {/* Full Standings */}
             <div>
-              <h2 className="text-2xl font-extrabold mb-6">TOP 10 del campeonato</h2>
+              <h2 className="text-2xl font-extrabold mb-6">TOP 5 del campeonato</h2>
               <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40  py-0 overflow-hidden">
                 <CardContent className="p-0 text-sm">
                   <div className="">
