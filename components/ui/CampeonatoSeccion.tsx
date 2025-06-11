@@ -206,8 +206,11 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                   </div>
                 </CardContent>
               </Card>
-              <div className="mt-6 px-96">
-                <a href="#" className="font-semibold text-center sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white">Ver campeonato completo</a>
+              {/* Botón responsive mejorado */}
+              <div className="mt-6 px-4 sm:px-8 md:px-16 lg:px-32 xl:px-96">
+                <a href="#" className="font-semibold text-center block w-full bg-red-600 hover:bg-red-700 px-4 py-2 sm:py-3 rounded-lg transition-colors text-sm sm:text-base text-white">
+                  Ver campeonato completo
+                </a>
               </div>
             </div>
           </div>
@@ -275,8 +278,11 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                 </div>
               </CardContent>
             </Card>
-            <div className="mt-6 px-96">
-              <a href="#" className="font-semibold text-center sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white">Ver resultados completos</a>
+            {/* Botón responsive mejorado */}
+            <div className="mt-6 px-4 sm:px-8 md:px-16 lg:px-32 xl:px-96">
+              <a href="#" className="font-semibold text-center block w-full bg-red-600 hover:bg-red-700 px-4 py-2 sm:py-3 rounded-xl transition-colors text-sm sm:text-base text-white">
+                Ver resultados completos
+              </a>
             </div>
           </div>
         )}

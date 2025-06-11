@@ -144,7 +144,7 @@ export default function HeroSection({ raceData }: HeroSectionProps) {
               <div className="flex items-center gap-2 mb-4">
                 <Clock className="w-5 h-5 text-red-500" />
                 <h3 className="text-lg font-semibold text-white">
-                  {raceData?.nombre ? `Próxima Carrera: ${raceData.nombre}` : "Próxima Carrera"}
+                  {raceData?.nombre ? `Próxima fecha -> ${raceData.nombre}` : "Próxima Carrera"}
                 </h3>
               </div>
 

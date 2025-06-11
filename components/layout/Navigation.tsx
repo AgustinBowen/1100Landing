@@ -71,12 +71,13 @@ export default function Navigation() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => scrollToSection("contacto")}
-            className="hidden sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white"
+          <a
+            href="#"
+            target="_blank"
+            className="cursor-pointer hidden sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white"
           >
-            CONTACTANOS
-          </button>
+            Live Timing   
+          </a>
 
           {/* Mobile menu button */}
           <button
