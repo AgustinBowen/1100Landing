@@ -138,7 +138,11 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                           {('excluido' in result && result.excluido) ? "EX" : ""}
                         </span>
                         <span className="text-sm font-bold text-white">
-                          {('vueltas' in result && result.vueltas) ? result.vueltas + "v" : "0"}
+                          {"vueltas" in result
+                            ? result.vueltas != null
+                              ? `${result.vueltas}v`
+                              : "0v"
+                            : "-"}
                         </span>
                       </div>
                     </div>

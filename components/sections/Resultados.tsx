@@ -131,7 +131,14 @@ export default function CampeonatoCompleto({
         <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 py-0 overflow-hidden">
           <CardContent className="p-0">
             <PilotoTable
-              pilotos={currentChampionship?.standings || []}
+              pilotos={
+                currentChampionship?.standings
+                  ? currentChampionship.standings.map((p, idx) => ({
+                      ...p,
+                      posicion: (p as any).posicion ?? idx + 1,
+                    }))
+                  : []
+              }
               config={{ showAuto: true, showPuntos: true, showTiempo: false, showVueltas: false }}
             />
             {(!currentChampionship || currentChampionship.standings.length === 0) && (
@@ -258,12 +265,21 @@ export default function CampeonatoCompleto({
                 </div>
               </div>
               <div className="flex flex-wrap gap-4">
-                <Tabs tabs={resultTypeTabs} activeTab={raceResultType} onTabChange={setRaceResultType} />
+                <Tabs
+                  tabs={resultTypeTabs}
+                  activeTab={raceResultType}
+                  onTabChange={(tabId) =>
+                    setRaceResultType(tabId as typeof raceResultType)
+                  }
+                />
               </div>
               <Card className="bg-[#000000] text-sm border-0 shadow-2xl shadow-red-500/40 py-0 overflow-hidden">
                 <CardContent className="p-0">
                   <PilotoTable
-                    pilotos={results}
+                    pilotos={results.map((p, idx) => ({
+                      ...p,
+                      posicion: p.posicion ?? idx + 1,
+                    }))}
                     config={{ showAuto: true, showPuntos: true, showTiempo: true, showVueltas: true }}
                   />
                   {results.length === 0 && (

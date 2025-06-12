@@ -38,11 +38,9 @@ export function PilotoRow({
             {puntos} <span className="text-gray-400">PTS</span>
           </div>
         )}
-        {vueltas !== undefined && (
-          <div className="text-white text-sm">
-            {excluido ? "EX" : `${vueltas}v`}
-          </div>
-        )}
+        <div className="text-white text-sm">
+          {excluido ? "EX" : `${vueltas ?? 0}v`}
+        </div>
       </div>
     </div>
   );
