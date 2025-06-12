@@ -8,9 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { CalendarSectionProps } from "@/types/championship";
 import { parseDate } from "@/lib/utils";
 
-export default function CalendarSection({ races, stats }: CalendarSectionProps) {
+interface CalendarSectionPropsExtended extends CalendarSectionProps {
+  onRaceClick?: (raceId: string) => void;
+}
+
+export default function CalendarSection({ races, stats, onRaceClick }: CalendarSectionPropsExtended) {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   console.log("stats recibidas",stats)
+  
   const getStatusConfig = (status: string) => {
     switch (status) {
       case "completed":
@@ -64,9 +69,14 @@ export default function CalendarSection({ races, stats }: CalendarSectionProps) 
     });
   };
 
-
   const getLiveRace = () => {
     return races.find(race => race.status === 'live');
+  };
+
+  const handleRaceClick = (raceId: string) => {
+    if (onRaceClick) {
+      onRaceClick(raceId);
+    }
   };
 
   if (races.length === 0) {
@@ -107,6 +117,7 @@ export default function CalendarSection({ races, stats }: CalendarSectionProps) 
                 className={`${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.hoverBorder} border-2 backdrop-blur-sm overflow-hidden group hover:scale-102 hover:-translate-y-1 transition-all duration-300 hover:shadow-xl ${statusConfig.hoverShadow} cursor-pointer`}
                 onMouseEnter={() => setHoveredCard(race.id)}
                 onMouseLeave={() => setHoveredCard(null)}
+                onClick={() => handleRaceClick(race.id)}
               >
                 <CardContent className="p-0">
                   <div className="flex items-center">
