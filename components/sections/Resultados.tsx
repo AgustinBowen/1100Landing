@@ -155,7 +155,7 @@ export default function CampeonatoCompleto({
               </div>
               {(!currentChampionship || currentChampionship.standings.length === 0) && (
                 <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
-                  No hay datos de clasificación disponibles
+                  No hay datos de clasificación disponibles 
                 </div>
               )}
             </CardContent>
