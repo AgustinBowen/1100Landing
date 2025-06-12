@@ -59,6 +59,7 @@ export interface SerieClasificatoria {
   piloto?: Piloto;
   tiempo?:number;
   vueltas?:number;
+  excluido?:boolean;
 }
 
 export interface CarreraFinal {

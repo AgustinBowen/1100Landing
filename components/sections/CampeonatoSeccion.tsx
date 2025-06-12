@@ -134,8 +134,12 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                         <span className="text-sm font-bold text-white">{formatearTiempo(result.tiempo.toString())}</span>
                       ) : null}
                       <div className="text-left mr-4">
-                        <span className="text-sm font-bold text-white">{result.excluido ? "EX" : ""}</span>
-                        <span className="text-sm font-bold text-white">{result.vueltas ? result.vueltas + "v" : "0"}</span>
+                        <span className="text-sm font-bold text-white">
+                          {('excluido' in result && result.excluido) ? "EX" : ""}
+                        </span>
+                        <span className="text-sm font-bold text-white">
+                          {('vueltas' in result && result.vueltas) ? result.vueltas + "v" : "0"}
+                        </span>
                       </div>
                     </div>
                   </div>
