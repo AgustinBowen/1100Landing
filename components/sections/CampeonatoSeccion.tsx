@@ -81,7 +81,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
                       ...standing,
                       posicion: idx + 1,
                     })) || []
-                }
+                }config={{ showAuto: true, showPuntos: true, showTiempo: false, showVueltas: false }}
               />
             </Card>
             <div className="mt-6 px-4 sm:px-8 md:px-16 lg:px-32 xl:px-96">
