@@ -8,7 +8,7 @@ interface SectionWrapperProps {
 export function SectionWrapper({ children, className }: SectionWrapperProps) {
   return (
     <div className={`min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-12 ${className}`}>
-      <div className="max-w-7xl mx-auto">{children}</div>
+      <div className="max-w-7xl mx-auto flex justify-center flex-col items-center">{children}</div>
     </div>
   );
 }

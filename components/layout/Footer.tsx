@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="relative z-10">
         {/* Main Footer Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 ">
             {/* Logo and Description */}
             <div className="lg:col-span-1">
               <div className="flex items-center space-x-2 mb-4">
@@ -25,12 +25,14 @@ export default function Footer() {
               {/* Social Media */}
               <div className="flex space-x-4">
                 <a
+                  target="_blank"
                   href="https://www.facebook.com/turismopista1100/?locale=es_LA"
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                 >
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a
+                  target="_blank"
                   href="https://www.instagram.com/turismopista1100/"
                   className="w-10 h-10 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                 >
@@ -41,39 +43,16 @@ export default function Footer() {
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-lg font-bold mb-4">Enlaces Rápidos</h3>
+              <h3 className="text-lg font-bold mb-4">Reglamento</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-red-100 hover:text-white transition-colors flex items-center gap-2">
-                    <Trophy className="w-4 h-4" />
-                    Campeonato
+                  <a target="_blank" href="https://drive.google.com/file/d/11oU4k3aJp_pwQ1hS2dO0u19TF8xgvwtU/view" className="text-red-100 hover:text-white transition-colors">
+                    Reglamento tecnico
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-red-100 hover:text-white transition-colors flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    Pilotos
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-red-100 hover:text-white transition-colors flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    Calendario
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-red-100 hover:text-white transition-colors">
-                    Galería
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-red-100 hover:text-white transition-colors">
-                    Noticias
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-red-100 hover:text-white transition-colors">
-                    Reglamento
+                  <a target="_blank" href="https://drive.google.com/file/d/14GzJq5i3VuIHEsfyl40zhRWio3X_eB-y/view" className="text-red-100 hover:text-white transition-colors">
+                    Reglamento deportivo
                   </a>
                 </li>
               </ul>
@@ -120,31 +99,16 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Stats Bar */}
-        <div className="border-t border-red-500/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-              <div>
-                <div className="text-2xl font-bold text-white mb-1">+45</div>
-                <div className="text-sm text-red-200">Pilotos</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-white mb-1">10</div>
-                <div className="text-sm text-red-200">Fechas</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-white mb-1">2025</div>
-                <div className="text-sm text-red-200">Temporada</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Bottom Bar */}
         <div className="border-t border-red-500/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="text-red-100 text-sm">© 2024 Turismo Pista 1100. Todos los derechos reservados.</div>
+              <div className="text-red-100 text-sm">© 2025 Turismo Pista 1100. Todos los derechos reservados.</div>
+              <div className="text-red-100 text-sm">
+                <a href="https://github.com/AgustinBowen/" target="_blank" className="text-red-100 hover:text-white transition-colors">
+                  make it by architín777
+                </a>
+              </div>
               <div className="flex gap-6 text-sm">
                 <a href="#" className="text-red-100 hover:text-white transition-colors">
                   Política de Privacidad

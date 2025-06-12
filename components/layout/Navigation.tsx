@@ -50,6 +50,9 @@ export default function Navigation() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b-[1px] border-[#242424]">
       <div className="flex items-center justify-between p-4 lg:px-12 lg:py-6">
         <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+            <div className="w-4 h-4 bg-white rounded-sm"></div>
+          </div>
           <a href="/"><span className="text-xl font-bold text-white hover:text-red-500">Turismo Pista 1100</span></a>
         </div>
 
@@ -59,11 +62,10 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => scrollToSection(item.id)}
-              className={`transition-colors ${
-                activeSection === item.id
+              className={`transition-colors ${activeSection === item.id
                   ? "text-red-500"
                   : "text-white hover:text-red-500"
-              }`}
+                }`}
             >
               {item.label}
             </button>
@@ -76,7 +78,7 @@ export default function Navigation() {
             target="_blank"
             className="cursor-pointer hidden sm:block bg-red-600 hover:bg-red-700 px-4 lg:px-6 py-2 rounded-lg transition-colors text-sm lg:text-base text-white"
           >
-            Live Timing   
+            Live Timing
           </a>
 
           {/* Mobile menu button */}
@@ -96,11 +98,10 @@ export default function Navigation() {
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`text-left transition-colors ${
-                    activeSection === item.id
+                  className={`text-left transition-colors ${activeSection === item.id
                       ? "text-red-500"
                       : "text-white hover:text-red-500"
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </button>

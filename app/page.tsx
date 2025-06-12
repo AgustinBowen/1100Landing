@@ -11,7 +11,7 @@ import {
   getCurrentChampionship,
   getChampionshipStats,
   getLatestRace,
-} from '../lib/data/championship';
+} from '../lib/data/dataFetch';
 import CalendarWrapper from '@/components/layout/CalendarWrapper';
 
 export default async function HomePage() {

@@ -1,9 +1,7 @@
 "use client";
-
 import { useState } from "react";
-import { Calendar, MapPin, Trophy, Clock, Flag, CheckCircle, Users, Eye } from 'lucide-react';
+import { Calendar, Trophy, Clock, Flag, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CalendarSectionProps } from "@/types/championship";
 import { parseDate } from "@/lib/utils";
 
@@ -13,57 +11,6 @@ interface CalendarSectionPropsExtended extends CalendarSectionProps {
 
 export default function CalendarSection({ races, stats, onRaceClick }: CalendarSectionPropsExtended) {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  console.log("stats recibidas", stats);
-
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case "completed":
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-green-500/30",
-          hoverBorder: "hover:border-green-500",
-          hoverShadow: "hover:shadow-green-500/20",
-          icon: <CheckCircle className="w-4 h-4 text-green-500" />,
-          badge: "FINALIZADA",
-          badgeColor: "bg-green-600",
-          badgeTextColor: "text-white",
-        };
-      case "live":
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-red-500/70",
-          hoverBorder: "hover:border-red-500",
-          hoverShadow: "hover:shadow-red-500/40",
-          icon: <Flag className="w-4 h-4 text-red-500 animate-pulse" />,
-          badge: "EN VIVO",
-          badgeColor: "bg-red-600 animate-pulse",
-          badgeTextColor: "text-white",
-        };
-      case "upcoming":
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-gray-500/20",
-          hoverBorder: "hover:border-white/50",
-          hoverShadow: "hover:shadow-white/10",
-          icon: <Clock className="w-4 h-4 text-gray-400" />,
-          badge: "PRÓXIMAMENTE",
-          badgeColor: "bg-gray-600",
-          badgeTextColor: "text-white",
-        };
-      default:
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-gray-500/20",
-          hoverBorder: "hover:border-white/50",
-          hoverShadow: "hover:shadow-white/10",
-          icon: <Clock className="w-4 h-4 text-gray-400" />,
-          badge: "PRÓXIMAMENTE",
-          badgeColor: "bg-gray-600",
-          badgeTextColor: "text-white",
-        };
-    }
-  };
-
   const formatDate = (dateString: string) => {
     const date = parseDate(dateString);
     return date.toLocaleDateString("es-ES", {
@@ -124,7 +71,6 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
             {/* Filas de carreras */}
             <div>
               {races.map((race, index) => {
-                const statusConfig = getStatusConfig(race.status ?? "upcoming");
                 const isHovered = hoveredCard === race.id;
 
                 return (
@@ -229,7 +175,6 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
               </p>
             </CardContent>
           </Card>
-
           <Card className="bg-black/90 border-gray-500/20 border-2">
             <CardContent className="p-4 text-center">
               <Clock className="w-6 h-6 text-gray-400 mx-auto mb-2" />

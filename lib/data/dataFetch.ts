@@ -50,7 +50,7 @@ export async function getLatestImages(): Promise<GalleryImage[]> {
       console.error('Error fetching latest images:', error.message);
       return [];
     }
-    
+
     const formattedImages = data?.map((img) => ({
       id: img.id,
       title: img.titulo,
@@ -91,14 +91,16 @@ export async function getNextRace(): Promise<NextRaceData | null> {
       .gte('fecha_desde', today)
       .order('fecha_desde', { ascending: true })
       .limit(1)
-      .single() as unknown as { data: {
-        id: string;
-        nombre: string;
-        fecha_desde: string;
-        fecha_hasta?: string;
-        campeonato?: Campeonato;
-        circuito?: Circuito;
-      }, error: any };
+      .single() as unknown as {
+        data: {
+          id: string;
+          nombre: string;
+          fecha_desde: string;
+          fecha_hasta?: string;
+          campeonato?: Campeonato;
+          circuito?: Circuito;
+        }, error: any
+      };
 
     if (error) {
       console.error('Error fetching next race:', error.message);
@@ -245,7 +247,7 @@ export async function getCurrentChampionship(): Promise<ChampionshipWithStanding
         puntos: pos.puntos_totales || 0,
         numeroAuto: numeroAutoMap.get(pos.piloto_id) || undefined,
       }));
-
+    console.log("fetch getcurrentchamp", championshipData, sortedPositions)
     return {
       id: championshipData.id,
       nombre: championshipData.nombre,
@@ -310,6 +312,8 @@ export async function getChampionshipStats(): Promise<ChampionshipStats> {
 export async function getLatestRace(): Promise<RaceWithDetails | null> {
   try {
     const today = new Date().toISOString().split('T')[0];
+
+    // 1. Traer la última fecha
     const { data, error } = await supabase
       .from('fechas')
       .select(`
@@ -321,65 +325,69 @@ export async function getLatestRace(): Promise<RaceWithDetails | null> {
         campeonato:campeonatos(id, nombre, anio),
         entrenamientos(id, numero, piloto_id, tiempo, posicion, piloto:pilotos(nombre, pais)),
         clasificacion(id, piloto_id, tiempo, posicion, piloto:pilotos(nombre, pais)),
-        series_clasificatorias(id, numero, piloto_id, posicion, puntos,tiempo,vueltas, piloto:pilotos(nombre, pais)),
-        carrera_final(id, piloto_id, posicion, puntos, presente,tiempo,vueltas,excluido, piloto:pilotos(nombre, pais))
+        series_clasificatorias(id, numero, piloto_id, posicion, puntos, tiempo, vueltas, excluido, piloto:pilotos(nombre, pais)),
+        carrera_final(id, piloto_id, posicion, puntos, presente, tiempo, vueltas, excluido, piloto:pilotos(nombre, pais))
       `)
       .lte('fecha_desde', today)
       .order('fecha_desde', { ascending: false })
       .limit(1)
-      .single() as unknown as { data: any; error: any };
+      .single();
 
-    if (error) {
-      console.error('Error fetching latest race:', error.message);
+    if (error || !data) {
+      console.error('Error fetching latest race:', error?.message);
       return null;
     }
 
-    if (data) {
-      const raceDate = new Date(data.fecha_desde);
-      const todayDate = new Date();
-      todayDate.setHours(0, 0, 0, 0);
+    // 2. Traer los pilotos_campeonato para esa carrera
+    const { data: pilotosCampeonato, error: pcError } = await supabase
+      .from('pilotos_campeonato')
+      .select('piloto_id, numero_auto')
+      .eq('campeonato_id', data.campeonato_id);
 
-      let status: 'completed' | 'live' | 'upcoming' = 'completed';
-      if (raceDate.toDateString() === todayDate.toDateString()) {
-        status = 'live';
-      }
-
-      return {
-        id: data.id,
-        nombre: data.nombre,
-        fecha_desde: data.fecha_desde,
-        fecha_hasta: data.fecha_hasta || undefined,
-        campeonato_id: data.campeonato_id,
-        campeonato: Array.isArray(data.campeonato) ? data.campeonato[0] : data.campeonato,
-        status,
-        entrenamientos: (data.entrenamientos || []).map((item: any) => ({
-          ...item,
-          fecha_id: data.id,
-          piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
-        })),
-        clasificacion: (data.clasificacion || []).map((item: any) => ({
-          ...item,
-          fecha_id: data.id,
-          piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
-        })),
-        series_clasificatorias: (data.series_clasificatorias || []).map((serie: any) => ({
-          ...serie,
-          fecha_id: data.id,
-          piloto: Array.isArray(serie.piloto) ? serie.piloto[0] : serie.piloto,
-        })),
-        carrera_final: (data.carrera_final || []).map((item: any) => ({
-          ...item,
-          fecha_id: data.id,
-          piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
-        })),
-      };
+    if (pcError) {
+      console.error('Error fetching pilotoCampeonato:', pcError.message);
+      return null;
     }
-    return null;
+
+    const numeroAutoMap = new Map<string, number>(
+      (pilotosCampeonato || []).map((pc: any) => [pc.piloto_id, pc.numero_auto])
+    );
+
+    const addNumeroAuto = (item: any) => ({
+      ...item,
+      fecha_id: data.id,
+      piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
+      numeroAuto: numeroAutoMap.get(item.piloto_id),
+    });
+
+    const raceDate = new Date(data.fecha_desde);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+
+    let status: 'completed' | 'live' | 'upcoming' = 'completed';
+    if (raceDate.toDateString() === todayDate.toDateString()) {
+      status = 'live';
+    }
+
+    return {
+      id: data.id,
+      nombre: data.nombre,
+      fecha_desde: data.fecha_desde,
+      fecha_hasta: data.fecha_hasta || undefined,
+      campeonato_id: data.campeonato_id,
+      campeonato: Array.isArray(data.campeonato) ? data.campeonato[0] : data.campeonato,
+      status,
+      entrenamientos: (data.entrenamientos || []).map(addNumeroAuto),
+      clasificacion: (data.clasificacion || []).map(addNumeroAuto),
+      series_clasificatorias: (data.series_clasificatorias || []).map(addNumeroAuto),
+      carrera_final: (data.carrera_final || []).map(addNumeroAuto),
+    };
   } catch (err) {
     console.error('Unexpected error:', err);
     return null;
   }
 }
+
 
 // Función para obtener todos los campeonatos (para el dropdown)
 export async function getAllChampionships(): Promise<Campeonato[]> {

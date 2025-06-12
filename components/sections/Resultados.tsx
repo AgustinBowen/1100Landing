@@ -6,12 +6,11 @@ import { useChampionshipYear } from "@/hooks/useChampionshipYear";
 import { Tabs } from "@/components/ui/Tabs";
 import { SectionWrapper } from "@/components/ui/SectionWrapper";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, ChevronDown, MapPin, Trophy, Clock, Flag, CheckCircle, Eye, BarChart3 } from "lucide-react";
+import { Calendar, ChevronDown, MapPin, Trophy, Clock, Flag, CheckCircle } from "lucide-react";
 import { PilotoTable } from "../common/PilotoTable";
 import { formatDate } from "@/utils/formatDate";
 import { ChampionshipWithStandings, RaceWithDetails, Campeonato } from "@/types/championship";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 
 interface CampeonatoCompletoProps {
   allChampionships: Campeonato[];

@@ -15,7 +15,7 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   return (
-    <div className={`bg-[#080808] border-2 rounded-lg p-1 sm:p-2 backdrop-blur-sm border-red-500/20 flex flex-wrap mb-6 ${className}`}>
+    <div className={`bg-[#080808] border-2 rounded-lg p-1 sm:p-2 backdrop-blur-sm border-red-500/20 flex gap-2 flex-wrap mb-6 ${className}`}>
       {tabs.map((tab) => (
         <button
           key={tab.id}

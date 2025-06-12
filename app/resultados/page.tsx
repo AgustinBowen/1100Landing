@@ -5,7 +5,7 @@ import {
   getAllChampionships,
   getChampionshipWithStandings,
   getChampionshipRaces,
-} from '../../lib/data/championship';
+} from '../../lib/data/dataFetch';
 import { RaceWithDetails, ChampionshipWithStandings, Campeonato } from '@/types/championship';
 
 export default async function CampeonatoPage({
