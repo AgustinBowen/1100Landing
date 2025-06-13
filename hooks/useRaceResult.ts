@@ -1,74 +1,86 @@
-import { useState } from "react";
-import { RaceWithDetails } from "@/types/championship";
+import { useState, useEffect, useMemo } from 'react';
+import { RaceWithDetails, RaceResult } from '@/types/championship';
 
-// Define the result type as a union type
 export type RaceResultType = 
-  | "carrera_final" 
-  | "series_clasificatorias_1" 
-  | "series_clasificatorias_2" 
-  | "series_clasificatorias_3" 
-  | "clasificacion" 
-  | "entrenamientos";
+  | 'carrera_final' 
+  | 'series_clasificatorias_1' 
+  | 'series_clasificatorias_2' 
+  | 'series_clasificatorias_3' 
+  | 'clasificacion' 
+  | 'entrenamientos_1'
+  | 'entrenamientos_2'
+  | 'entrenamientos_3'
+  | 'entrenamientos_4'
+  // Permitir cualquier string que termine con un número para entrenamientos dinámicos
+  | string;
 
-/**
- * Hook para gestionar el tipo de resultado de carrera y obtener los datos correspondientes.
- * @param race - Objeto de carrera con detalles (opcional).
- * @param defaultResultType - Tipo de resultado inicial (por defecto: "carrera_final").
- * @returns Objeto con el tipo de resultado activo, función para cambiarlo, y datos de resultados.
- */
-export function useRaceResult(
-  race: RaceWithDetails | null,
-  defaultResultType: RaceResultType = "carrera_final"
-) {
-  const [raceResultType, setRaceResultType] = useState<RaceResultType>(defaultResultType);
+export function useRaceResult(selectedRace: RaceWithDetails | null) {
+  const [raceResultType, setRaceResultType] = useState<string>('carrera_final');
 
-  const getSeriesData = (serieNumber: number) => {
-    return race?.series_clasificatorias?.filter((serie) => serie.numero === serieNumber) || [];
-  };
+  // Reset cuando cambia la carrera seleccionada
+  useEffect(() => {
+    if (selectedRace) {
+      setRaceResultType('carrera_final');
+    }
+  }, [selectedRace?.id]);
 
-  const getResults = () => {
-    if (!race) return [];
+  const results: RaceResult[] = useMemo(() => {
+    if (!selectedRace) return [];
 
-    switch (raceResultType) {
-      case "carrera_final":
-        return race.carrera_final?.sort((a, b) => (a.posicion || 999) - (b.posicion || 999)) || [];
-      case "series_clasificatorias_1":
-        return getSeriesData(1).sort((a, b) => (a.posicion || 999) - (b.posicion || 999));
-      case "series_clasificatorias_2":
-        return getSeriesData(2).sort((a, b) => (a.posicion || 999) - (b.posicion || 999));
-      case "series_clasificatorias_3":
-        return getSeriesData(3).sort((a, b) => (a.posicion || 999) - (b.posicion || 999));
-      case "clasificacion":
-        return race.clasificacion?.sort((a, b) => (a.posicion || 999) - (b.posicion || 999)) || [];
-      case "entrenamientos":
-        return race.entrenamientos?.sort((a, b) => (a.posicion || 999) - (b.posicion || 999)) || [];
+    let rawResults: any[] = [];
+
+    switch (true) {
+      case raceResultType === 'carrera_final':
+        rawResults = selectedRace.carrera_final || [];
+        break;
+      
+      case raceResultType === 'clasificacion':
+        rawResults = selectedRace.clasificacion || [];
+        break;
+      
+      case raceResultType.startsWith('series_clasificatorias_'):
+        const serieNumber = parseInt(raceResultType.split('_')[2]);
+        rawResults = (selectedRace.series_clasificatorias || [])
+          .filter(serie => serie.numero === serieNumber);
+        break;
+      
+      case raceResultType.startsWith('entrenamientos_'):
+        const entrenamientoNumber = parseInt(raceResultType.split('_')[1]);
+        rawResults = (selectedRace.entrenamientos || [])
+          .filter(entrenamiento => entrenamiento.numero === entrenamientoNumber);
+        break;
+      
       default:
-        return [];
+        rawResults = [];
     }
-  };
 
-  // Create a type-safe setter function
-  const setRaceResultTypeSafe = (newType: string) => {
-    const validTypes: RaceResultType[] = [
-      "carrera_final",
-      "series_clasificatorias_1", 
-      "series_clasificatorias_2",
-      "series_clasificatorias_3",
-      "clasificacion",
-      "entrenamientos"
-    ];
-    
-    if (validTypes.includes(newType as RaceResultType)) {
-      setRaceResultType(newType as RaceResultType);
-    } else {
-      console.warn(`Invalid race result type: ${newType}. Defaulting to carrera_final.`);
-      setRaceResultType("carrera_final");
-    }
-  };
+    // Convertir a RaceResult y ordenar por posición
+    const mappedResults: RaceResult[] = rawResults.map(result => ({
+      id: result.id,
+      fecha_id: result.fecha_id,
+      piloto_id: result.piloto_id,
+      piloto: result.piloto,
+      posicion: result.posicion,
+      numeroAuto: result.numeroAuto,
+      tiempo: result.tiempo,
+      vueltas: result.vueltas,
+      excluido: result.excluido,
+      puntos: result.puntos,
+      presente: result.presente,
+    }));
+
+    // Ordenar por posición (null/undefined al final)
+    return mappedResults.sort((a, b) => {
+      if (a.posicion == null && b.posicion == null) return 0;
+      if (a.posicion == null) return 1;
+      if (b.posicion == null) return -1;
+      return a.posicion - b.posicion;
+    });
+  }, [selectedRace, raceResultType]);
 
   return {
     raceResultType,
-    setRaceResultType: setRaceResultTypeSafe,
-    results: getResults(),
+    setRaceResultType,
+    results,
   };
 }

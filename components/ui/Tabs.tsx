@@ -15,7 +15,7 @@ interface TabsProps {
 
 export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
   return (
-    <div className={`bg-[#080808] border-2 rounded-lg p-1 sm:p-2 backdrop-blur-sm border-red-500/20 flex gap-2 flex-wrap ${className}`}>
+    <div className={`bg-[#000000] border-2 rounded-lg p-1 sm:p-2 backdrop-blur-sm border-red-500 flex gap-2 flex-wrap ${className}`}>
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -27,9 +27,10 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
             flex-1 sm:flex-none
             min-w-0 
             whitespace-nowrap overflow-hidden text-ellipsis
+            hover:cursor-pointer
             ${activeTab === tab.id 
               ? "bg-red-600 text-white" 
-              : "text-gray-400 hover:text-white hover:bg-red-600/20"
+              : "text-gray-200 hover:text-white hover:bg-red-600/50"
             }
           `}
           title={tab.label} // Tooltip para mostrar texto completo en móviles

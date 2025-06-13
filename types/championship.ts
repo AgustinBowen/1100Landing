@@ -38,7 +38,8 @@ export interface Entrenamiento {
   tiempo?: number;
   posicion?: number;
   piloto?: Piloto;
-  numeroAuto?: number; // AGREGADO
+  numeroAuto?: number; 
+  vueltas?:number;
 }
 
 export interface Clasificacion {
@@ -48,7 +49,8 @@ export interface Clasificacion {
   tiempo?: number;
   posicion: number;
   piloto?: Piloto;
-  numeroAuto?: number; // AGREGADO
+  numeroAuto?: number; 
+  vueltas?:number;
 }
 
 export interface SerieClasificatoria {

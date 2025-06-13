@@ -18,6 +18,10 @@ interface CampeonatoCompletoProps {
   championshipRaces: RaceWithDetails[];
   selectedYear: number;
   selectedRaceId?: string;
+  // Agregar props para estados de loading
+  isLoadingChampionship?: boolean;
+  isLoadingRaces?: boolean;
+  isLoadingResults?: boolean;
 }
 
 export default function CampeonatoCompleto({
@@ -26,6 +30,10 @@ export default function CampeonatoCompleto({
   championshipRaces,
   selectedYear,
   selectedRaceId,
+  // Props de loading con valores por defecto
+  isLoadingChampionship = false,
+  isLoadingRaces = false,
+  isLoadingResults = false,
 }: CampeonatoCompletoProps) {
   const { activeTab, setActiveTab } = useTabs("standings");
   const [selectedRace, setSelectedRace] = useState<RaceWithDetails | null>(
@@ -41,14 +49,36 @@ export default function CampeonatoCompleto({
     { id: "raceDetails", label: "RESULTADOS" },
   ];
 
-  const resultTypeTabs = [
-    { id: "carrera_final", label: "Carrera Final" },
-    { id: "series_clasificatorias_1", label: "Serie 1" },
-    { id: "series_clasificatorias_2", label: "Serie 2" },
-    { id: "series_clasificatorias_3", label: "Serie 3" },
-    { id: "clasificacion", label: "Clasificación" },
-    { id: "entrenamientos", label: "Entrenamientos" },
-  ];
+  // Función para obtener las tabs de resultados dinámicamente basadas en la carrera seleccionada
+  const getResultTypeTabs = () => {
+    const baseTabs = [
+      { id: "carrera_final", label: "Carrera Final" },
+      { id: "series_clasificatorias_1", label: "Serie 1" },
+      { id: "series_clasificatorias_2", label: "Serie 2" },
+      { id: "series_clasificatorias_3", label: "Serie 3" },
+      { id: "clasificacion", label: "Clasificación" },
+    ];
+
+    // Agregar tabs de entrenamientos basados en los números disponibles
+    if (selectedRace?.entrenamientos) {
+      // Obtener números únicos de entrenamientos ordenados
+      const entrenaminentoNumbers = Array.from(
+        new Set(selectedRace.entrenamientos.map(e => e.numero))
+      ).sort((a, b) => a - b);
+
+      const entrenamientoTabs = entrenaminentoNumbers.map(numero => ({
+        id: `entrenamientos_${numero}`,
+        label: `Entrenamiento ${numero}`
+      }));
+
+      // Insertar las tabs de entrenamientos al final
+      baseTabs.push(...entrenamientoTabs);
+    }
+
+    return baseTabs;
+  };
+
+  const resultTypeTabs = getResultTypeTabs();
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -118,7 +148,7 @@ export default function CampeonatoCompleto({
             <select
               value={currentYear}
               onChange={(e) => changeYear(parseInt(e.target.value))}
-              className="w-full sm:w-auto bg-[#080808] border-2 border-red-500/20 rounded-lg px-4 sm:px-6 py-3 sm:py-4 text-white appearance-none pr-8 focus:border-red-500 outline-none text-sm"
+              className="w-full sm:w-auto bg-[#000000] border-2 border-red-500 rounded-lg px-4 sm:px-6 py-3 sm:py-4 text-white appearance-none pr-8 focus:border-red-500 outline-none text-sm"
             >
               {allChampionships.map((championship) => (
                 <option key={championship.id} value={championship.anio}>
@@ -137,7 +167,7 @@ export default function CampeonatoCompleto({
 
       {/* Content sections */}
       <div className="w-full">
-        {/* Standings content - Estilo igual a CampeonatoSeccion */}
+        {/* Standings content - con skeleton loading */}
         {activeTab === "standings" && (
           <div className="max-w-4xl mx-auto">
             <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
@@ -156,18 +186,15 @@ export default function CampeonatoCompleto({
                   }
                   config={{ showAuto: true, showPuntos: true, showTiempo: false, showVueltas: false }}
                   variant="championship"
+                  isLoading={isLoadingChampionship}
+                  skeletonRows={10}
                 />
               </CardContent>
             </Card>
-            {(!currentChampionship || currentChampionship.standings.length === 0) && (
-              <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
-                No hay datos de clasificación disponibles 
-              </div>
-            )}
           </div>
         )}
 
-        {/* All races content */}
+        {/* All races content - skeleton para la lista de carreras */}
         {activeTab === "races" && (
           <div className="max-w-4xl mx-auto">
             <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
@@ -181,84 +208,117 @@ export default function CampeonatoCompleto({
                   </div>
                 </div>
 
-                {/* Filas de carreras */}
+                {/* Skeleton o contenido real de carreras */}
                 <div>
-                  {championshipRaces.map((race, index) => {
-                    const statusConfig = getStatusConfig(race.status ?? "upcoming");
-                    const isHovered = hoveredCard === race.id;
-
-                    return (
+                  {isLoadingRaces ? (
+                    // Skeleton para lista de carreras
+                    Array.from({ length: 8 }).map((_, index) => (
                       <div
-                        key={race.id}
-                        className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${
-                          isHovered ? 'bg-[#111111]' : ''
-                        }`}
-                        onMouseEnter={() => setHoveredCard(race.id)}
-                        onMouseLeave={() => setHoveredCard(null)}
-                        onClick={() => handleRaceClick(race)}
+                        key={`race-skeleton-${index}`}
+                        className="px-4 py-4 animate-pulse"
                       >
                         <div className="grid grid-cols-12 gap-2 items-center">
                           {/* Columna Fecha */}
                           <div className="col-span-6 sm:col-span-4">
                             <div className="flex items-center gap-3">
-                              {/* Número de carrera */}
-                              <div className="flex-shrink-0">
-                                <div className="w-8 h-8 rounded bg-red-500 flex items-center justify-center">
-                                  <span className="text-white font-bold text-sm">{index + 1}</span>
-                                </div>
-                              </div>
+                              <div className="w-8 h-8 rounded bg-gray-700"></div>
                               <div className="min-w-0 flex-1">
-                                <div className="font-semibold text-white text-sm truncate">
-                                  {race.nombre}
-                                </div>
-                                <div className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                                  <Calendar className="w-3 h-3" />
-                                  {formatDate(race.fecha_desde)}
-                                </div>
-                                <div className="text-xs text-gray-500 truncate">
-                                  {race.circuitoNombre || 'Circuito no especificado'}
-                                </div>
+                                <div className="w-32 h-4 bg-gray-700 rounded mb-1"></div>
+                                <div className="w-20 h-3 bg-gray-700 rounded mb-1"></div>
+                                <div className="w-24 h-3 bg-gray-700 rounded"></div>
                               </div>
                             </div>
                           </div>
-
-                          {/* Columna Ganador - oculta en móvil */}
+                          {/* Columna Ganador */}
                           <div className="col-span-4 sm:col-span-5 hidden sm:block">
-                            {race.status === "completed" && race.winner ? (
-                              <div className="flex items-center gap-2">
-                                <Trophy className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                                <span className="text-white font-medium text-sm truncate">
-                                  {race.winner}
-                                </span>
-                              </div>
-                            ) : (
-                              <span className="text-gray-500">-</span>
-                            )}
+                            <div className="w-24 h-4 bg-gray-700 rounded"></div>
                           </div>
-
                           {/* Columna Resultados */}
                           <div className="col-span-6 sm:col-span-3 text-center">
-                            <div className="flex items-center justify-center gap-2">
-                              <button
-                                className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRaceClick(race);
-                                }}
-                                title="Ver resultado"
-                              >
-                                Ver Resultado
-                              </button>
-                            </div>
+                            <div className="w-20 h-6 bg-gray-700 rounded mx-auto"></div>
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))
+                  ) : (
+                    // Contenido real de carreras
+                    championshipRaces.map((race, index) => {
+                      const statusConfig = getStatusConfig(race.status ?? "upcoming");
+                      const isHovered = hoveredCard === race.id;
+
+                      return (
+                        <div
+                          key={race.id}
+                          className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${
+                            isHovered ? 'bg-[#111111]' : ''
+                          }`}
+                          onMouseEnter={() => setHoveredCard(race.id)}
+                          onMouseLeave={() => setHoveredCard(null)}
+                          onClick={() => handleRaceClick(race)}
+                        >
+                          <div className="grid grid-cols-12 gap-2 items-center">
+                            {/* Columna Fecha */}
+                            <div className="col-span-6 sm:col-span-4">
+                              <div className="flex items-center gap-3">
+                                {/* Número de carrera */}
+                                <div className="flex-shrink-0">
+                                  <div className="w-8 h-8 rounded bg-red-500 flex items-center justify-center">
+                                    <span className="text-white font-bold text-sm">{index + 1}</span>
+                                  </div>
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="font-semibold text-white text-sm truncate">
+                                    {race.nombre}
+                                  </div>
+                                  <div className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                                    <Calendar className="w-3 h-3" />
+                                    {formatDate(race.fecha_desde)}
+                                  </div>
+                                  <div className="text-xs text-gray-500 truncate">
+                                    {race.circuitoNombre || 'Circuito no especificado'}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Columna Ganador - oculta en móvil */}
+                            <div className="col-span-4 sm:col-span-5 hidden sm:block">
+                              {race.status === "completed" && race.winner ? (
+                                <div className="flex items-center gap-2">
+                                  <Trophy className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                                  <span className="text-white font-medium text-sm truncate">
+                                    {race.winner}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-500">-</span>
+                              )}
+                            </div>
+
+                            {/* Columna Resultados */}
+                            <div className="col-span-6 sm:col-span-3 text-center">
+                              <div className="flex items-center justify-center gap-2">
+                                <button
+                                  className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRaceClick(race);
+                                  }}
+                                  title="Ver resultado"
+                                >
+                                  Ver Resultado
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
 
-                {championshipRaces.length === 0 && (
-                  <div className="p-8 text-center text-gray-400">
+                {!isLoadingRaces && championshipRaces.length === 0 && (
+                  <div className="p-8 text-center text-sm text-gray-200">
                     No hay carreras disponibles para este campeonato
                   </div>
                 )}
@@ -267,7 +327,7 @@ export default function CampeonatoCompleto({
           </div>
         )}
 
-        {/* Race details content - Estilo igual a CampeonatoSeccion */}
+        {/* Race details content - con skeleton para resultados */}
         {activeTab === "raceDetails" && (
           <div>
             {!selectedRace ? (
@@ -284,7 +344,7 @@ export default function CampeonatoCompleto({
               </div>
             ) : (
               <div>
-                {/* Race header - igual a CampeonatoSeccion */}
+                {/* Race header */}
                 <div className="mb-6 flex flex-col justify-center items-center">
                   <h2 className="text-2xl font-extrabold mb-2">{selectedRace.nombre}</h2>
                   <p className="text-gray-400">
@@ -310,7 +370,7 @@ export default function CampeonatoCompleto({
                   />
                 </div>
 
-                {/* Results table - con el mismo estilo que CampeonatoSeccion */}
+                {/* Results table - con skeleton loading */}
                 <div className="max-w-4xl mx-auto">
                   <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
                     <CardContent className="p-0">
@@ -332,14 +392,11 @@ export default function CampeonatoCompleto({
                           showVueltas: true
                         }}
                         variant="race"
+                        isLoading={isLoadingResults}
+                        skeletonRows={15}
                       />
                     </CardContent>
                   </Card>
-                  {results.length === 0 && (
-                    <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
-                      No hay resultados disponibles para {raceResultType.replace("_", " ")}
-                    </div>
-                  )}
                 </div>
               </div>
             )}

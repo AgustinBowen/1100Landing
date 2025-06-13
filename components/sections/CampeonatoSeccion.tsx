@@ -47,7 +47,7 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
         <div className="max-w-fit">
           {/* Featured Drivers */}
           <div className="mb-12">
-            <h2 className="text-2xl font-bold mb-6 text-center">TOP 10 del campeonato</h2>
+            <h2 className="text-2xl font-bold mb-6 text-center">TOP 5 del campeonato</h2>
             {championship?.standings && championship.standings.length >= 3 ? (
               <div className="flex flex-col md:flex-row items-end justify-center gap-6 max-w-4xl mx-auto">
                 {/* Segundo puesto */}
@@ -130,14 +130,14 @@ export default function ChampionshipSection({ championship, stats, latestRace }:
               <div className="mb-6 flex flex-col justify-center items-center">
                 <h2 className="text-2xl font-extrabold mb-2">TOP 10 - Última Carrera</h2>
                 <h3 className="text-xl font-semibold mb-0">{latestRace.nombre}</h3>
-                <p className="text-gray-400">
+                <p className="text-gray-200">
                   {latestRace.fecha_hasta
                     ? formatDate(latestRace.fecha_hasta)
                     : formatDate(latestRace.fecha_desde)
                   }
                 </p>
                 {latestRace.circuitoNombre && (
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-300 text-sm">
                     {latestRace.circuitoNombre}
                     {latestRace.circuitoDistancia && ` - ${latestRace.circuitoDistancia}m`}
                   </p>

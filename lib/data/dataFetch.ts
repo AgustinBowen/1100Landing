@@ -334,8 +334,9 @@ export async function getLatestRace(): Promise<RaceWithDetails | null> {
         fecha_hasta,
         campeonato_id,
         campeonato:campeonatos(id, nombre, anio),
-        entrenamientos(id, numero, piloto_id, tiempo, posicion, piloto:pilotos(nombre, pais)),
-        clasificacion(id, piloto_id, tiempo, posicion, piloto:pilotos(nombre, pais)),
+        circuito:circuitos(nombre, distancia),
+        entrenamientos(id, numero, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
+        clasificacion(id, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
         series_clasificatorias(id, numero, piloto_id, posicion, puntos, tiempo, vueltas, excluido, piloto:pilotos(nombre, pais)),
         carrera_final(id, piloto_id, posicion, puntos, presente, tiempo, vueltas, excluido, piloto:pilotos(nombre, pais))
       `)
@@ -386,6 +387,9 @@ export async function getLatestRace(): Promise<RaceWithDetails | null> {
       fecha_desde: data.fecha_desde,
       fecha_hasta: data.fecha_hasta || undefined,
       campeonato_id: data.campeonato_id,
+      circuitoNombre: Array.isArray(data.circuito)
+        ? (data.circuito[0] as Circuito | undefined)?.nombre
+        : (data.circuito as Circuito | undefined)?.nombre,
       campeonato: Array.isArray(data.campeonato) ? data.campeonato[0] : data.campeonato,
       status,
       entrenamientos: (data.entrenamientos || []).map(addNumeroAuto),
@@ -499,14 +503,14 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
         campeonato_id,
         campeonato:campeonatos(nombre, anio),
         circuito:circuitos(nombre, distancia),
-        entrenamientos(id, numero, piloto_id, tiempo, posicion, piloto:pilotos(nombre, pais)),
-        clasificacion(id, piloto_id, tiempo, posicion, piloto:pilotos(nombre, pais)),
+        entrenamientos(id, numero, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
+        clasificacion(id, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
         series_clasificatorias(id, numero, piloto_id, posicion, puntos,tiempo,vueltas, piloto:pilotos(nombre, pais)),
         carrera_final(id, piloto_id, posicion, puntos, presente,tiempo,vueltas,excluido, piloto:pilotos(nombre, pais))
       `)
       .eq('campeonato_id', championshipId)
       .order('fecha_desde', { ascending: true }) as unknown as { data: any[]; error: any };
-
+        
     if (error) {
       console.error('Error fetching championship races:', error.message);
       return [];
@@ -561,7 +565,7 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
           status,
           entrenamientos: (race.entrenamientos || []).map((item: any) => ({
             ...addNumeroAuto(item),
-            fecha_id: race.id, // Asegurar que fecha_id esté correcto
+            fecha_id: race.id, 
           })),
           clasificacion: (race.clasificacion || []).map((item: any) => ({
             ...addNumeroAuto(item),

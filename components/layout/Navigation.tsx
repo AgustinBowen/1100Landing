@@ -2,11 +2,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Menu, X } from 'lucide-react';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
+  const pathname = usePathname();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -18,6 +20,11 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Si estamos en una ruta específica, no cambiar el activeSection por scroll
+      if (pathname !== "/") {
+        return;
+      }
+
       const sections = ["inicio", "campeonato", "calendario", "galeria"];
       const scrollPosition = window.scrollY + 100;
 
@@ -35,16 +42,43 @@ export default function Navigation() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // Establecer activeSection basado en la ruta actual
+    if (pathname === "/resultados") {
+      setActiveSection("resultados");
+    } else if (pathname === "/") {
+      // Solo en la página principal, detectar por scroll
+      window.addEventListener("scroll", handleScroll);
+      // Ejecutar una vez para establecer la sección inicial
+      handleScroll();
+    }
+
+    return () => {
+      if (pathname === "/") {
+        window.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, [pathname]);
 
   const navigationItems = [
-    { id: "inicio", label: "Inicio" },
-    { id: "campeonato", label: "Campeonato" },
-    { id: "calendario", label: "Calendario" },
-    { id: "galeria", label: "Galería" },
+    { id: "inicio", label: "Inicio", href: "/#inicio", isRoute: false },
+    { id: "campeonato", label: "Campeonato", href: "/#campeonato", isRoute: false },
+    { id: "resultados", label: "Resultados", href: "/resultados", isRoute: true },
+    { id: "calendario", label: "Calendario", href: "/#calendario", isRoute: false },
+    { id: "galeria", label: "Galería", href: "/#galeria", isRoute: false },
   ];
+
+  const handleNavClick = (item: typeof navigationItems[0]) => {
+    if (item.isRoute) {
+      setMobileMenuOpen(false);
+      return;
+    } else {
+      if (pathname !== "/") {
+        window.location.href = item.href;
+      } else {
+        scrollToSection(item.id);
+      }
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b-[1px] border-[#242424]">
@@ -59,16 +93,22 @@ export default function Navigation() {
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-8 text-bold font-semibold">
           {navigationItems.map((item) => (
-            <button
+            <a
               key={item.id}
-              onClick={() => scrollToSection(item.id)}
+              href={item.href}
+              onClick={(e) => {
+                if (!item.isRoute) {
+                  e.preventDefault();
+                  handleNavClick(item);
+                }
+              }}
               className={`transition-colors ${activeSection === item.id
                   ? "text-red-500"
                   : "text-white hover:text-red-500"
                 }`}
             >
               {item.label}
-            </button>
+            </a>
           ))}
         </div>
 
@@ -95,23 +135,41 @@ export default function Navigation() {
           <div className="absolute top-full left-0 right-0 bg-black/95 backdrop-blur-sm border-b border-red-500/20 lg:hidden">
             <div className="flex flex-col space-y-4 p-6">
               {navigationItems.map((item) => (
-                <button
+                <a
                   key={item.id}
-                  onClick={() => scrollToSection(item.id)}
+                  href={item.href}
+                  onClick={(e) => {
+                    if (!item.isRoute) {
+                      e.preventDefault();
+                      handleNavClick(item);
+                    } else {
+                      setMobileMenuOpen(false);
+                    }
+                  }}
                   className={`text-left transition-colors ${activeSection === item.id
                       ? "text-red-500"
                       : "text-white hover:text-red-500"
                     }`}
                 >
                   {item.label}
-                </button>
+                </a>
               ))}
-              <button
-                onClick={() => scrollToSection("contacto")}
-                className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg transition-colors text-left text-white"
+              <a
+                href="/#contacto"
+                onClick={(e) => {
+                  if (pathname !== "/") {
+                    // Si no estamos en la página principal, navegar a ella
+                    window.location.href = "/#contacto";
+                  } else {
+                    e.preventDefault();
+                    scrollToSection("contacto");
+                  }
+                  setMobileMenuOpen(false);
+                }}
+                className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg transition-colors text-left text-white inline-block"
               >
-                CONTACTANOS
-              </button>
+                Live timing
+              </a>
             </div>
           </div>
         )}
