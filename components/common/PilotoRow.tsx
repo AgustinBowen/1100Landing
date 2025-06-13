@@ -18,6 +18,17 @@ interface PilotoRowProps {
   variant?: "championship" | "race";
 }
 
+// Función para formatear nombre en móvil (ej: "Santiago Villar" -> "S.Villar")
+const formatearNombreMovil = (nombreCompleto: string): string => {
+  const partes = nombreCompleto.trim().split(' ');
+  if (partes.length < 2) return nombreCompleto;
+  
+  const primerNombre = partes[0];
+  const apellido = partes[partes.length - 1];
+  
+  return `${primerNombre.charAt(0)}.${apellido}`;
+};
+
 // Componente para la columna de posición
 const PositionColumn = ({ position }: { position: number }) => (
   <div className="flex-shrink-0">
@@ -40,7 +51,9 @@ const PilotInfo = ({ nombre, pais, numeroAuto }: {
           #{numeroAuto}
         </span>
       )}
-      <span className="truncate">{nombre}</span>
+      {/* Siempre mostrar nombre abreviado en móvil, completo en desktop */}
+      <span className="truncate hidden sm:inline">{nombre}</span>
+      <span className="truncate sm:hidden">{formatearNombreMovil(nombre)}</span>
     </div>
     {pais && (
       <div className="text-xs text-gray-500 truncate hidden sm:block">
@@ -115,30 +128,30 @@ const RaceWithSectorsVariant = ({
 }: PilotoRowProps) => (
   <div className="px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group">
     <div className="grid grid-cols-12 gap-1 items-center">
-      {/* Columna Piloto */}
-      <div className="col-span-4 sm:col-span-2">
+      {/* Columna Piloto - Más espacio en móvil */}
+      <div className="col-span-5 sm:col-span-2">
         <div className="flex items-center gap-2">
           <PositionColumn position={position} />
           <PilotInfo nombre={nombre} pais={pais} numeroAuto={numeroAuto} />
         </div>
       </div>
 
-      {/* Columna Mejor Tiempo */}
-      <div className="col-span-3 sm:col-span-2 text-center">
-        {tiempo ? (
-          <span className="text-white font-bold text-xs sm:text-sm">
-            {tiempo}
+      {/* Columna Diff 1ro - Visible en móvil */}
+      <div className="col-span-3 sm:col-span-1 text-center">
+        {diffPrimero ? (
+          <span className="text-gray-300 font-medium text-xs sm:text-sm">
+            +{diffPrimero}
           </span>
         ) : (
-          <span className="text-gray-500 text-xs sm:text-sm">-</span>
+          <span className="text-gray-200 text-xs sm:text-sm">-</span>
         )}
       </div>
 
-      {/* Columna Diff 1ro */}
-      <div className="col-span-2 sm:col-span-1 text-center">
-        {diffPrimero ? (
-          <span className="text-gray-300 font-medium text-xs sm:text-sm">
-            {diffPrimero}
+      {/* Columna Mejor Tiempo - Visible en móvil */}
+      <div className="col-span-4 sm:col-span-2 text-center">
+        {tiempo ? (
+          <span className="text-white font-bold text-xs sm:text-sm">
+            {tiempo}
           </span>
         ) : (
           <span className="text-gray-500 text-xs sm:text-sm">-</span>
@@ -176,20 +189,11 @@ const RaceWithSectorsVariant = ({
         )}
       </div>
 
-      {/* Columna Vueltas */}
-      <div className="col-span-3 sm:col-span-1 text-center">
+      {/* Columna Vueltas - Oculta en móvil */}
+      <div className="col-span-0 sm:col-span-1 text-center hidden sm:block">
         <span className="text-white font-bold text-xs sm:text-sm">
           {excluido ? "EX" : `${vueltas ?? 0}v`}
         </span>
-        {/* Diff y sectores en móvil */}
-        <div className="sm:hidden mt-1">
-          {diffPrimero && (
-            <div className="text-xs text-gray-300 mb-1">
-              +{diffPrimero}
-            </div>
-          )}
-          <MobileSectors sector1={sector1} sector2={sector2} sector3={sector3} />
-        </div>
       </div>
     </div>
   </div>
@@ -209,8 +213,8 @@ const RaceNormalVariant = ({
 }: PilotoRowProps) => (
   <div className="px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group">
     <div className="grid grid-cols-12 gap-1 items-center">
-      {/* Columna Piloto */}
-      <div className="col-span-3 sm:col-span-3">
+      {/* Columna Piloto - Más espacio en móvil */}
+      <div className="col-span-6 sm:col-span-3">
         <div className="flex items-center gap-2">
           <PositionColumn position={position} />
           <PilotInfo nombre={nombre} pais={pais} numeroAuto={numeroAuto} />
@@ -235,7 +239,7 @@ const RaceNormalVariant = ({
             {diffPrimero}
           </span>
         ) : (
-          <span className="text-gray-500">-</span>
+          <span className="text-gray-200">-</span>
         )}
       </div>
 
@@ -249,7 +253,7 @@ const RaceNormalVariant = ({
       )}
 
       {/* Columna Vueltas */}
-      <div className={`${puntos !== undefined ? 'col-span-9 sm:col-span-3' : 'col-span-9 sm:col-span-5'} text-center`}>
+      <div className={`${puntos !== undefined ? 'col-span-6 sm:col-span-3' : 'col-span-6 sm:col-span-5'} text-center`}>
         <span className="text-white font-bold text-xs sm:text-sm">
           {excluido ? "EX" : `${vueltas ?? 0}v`}
         </span>
@@ -266,7 +270,7 @@ const RaceNormalVariant = ({
             </div>
           )}
           {puntos !== undefined && (
-            <div className="text-xs text-red-500">
+            <div className="text-xs text-red-500 font-medium">
               {puntos}pts
             </div>
           )}

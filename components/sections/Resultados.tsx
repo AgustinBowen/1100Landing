@@ -91,27 +91,37 @@ export default function CampeonatoCompleto({
   };
 
   return (
-    <SectionWrapper className="py-8 sm:py-12 md:py-16 lg:py-20 text-[12px] px-2 sm:px-4">
-      {/* Header section - responsive */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full mb-4">
-        <div className="w-full sm:w-auto">
+    <SectionWrapper className="py-6 sm:py-8 md:py-12 lg:py-16 xl:py-20 text-xs sm:text-sm px-3 sm:px-4 md:px-6">
+      {/* Header section - responsive mejorado */}
+      <div className="flex flex-col sm:flex-col gap-3 sm:gap-2 md:gap-4 w-full mb-4 sm:mb-6">
+        <div className="w-auto sm:w-auto sm:min-w-[280px] md:min-w-[320px]">
           <div className="relative">
             <select
               value={currentYear}
               onChange={(e) => changeYear(parseInt(e.target.value))}
-              className="w-full sm:w-auto bg-[#000000] border-2 border-red-500 rounded-lg px-4 sm:px-6 py-3 sm:py-4 text-white appearance-none pr-8 focus:border-red-500 outline-none text-sm"
+              className="w-full bg-[#000000] border-2 border-red-500 rounded-lg px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 text-white appearance-none pr-8 sm:pr-10 focus:border-red-400 focus:ring-2 focus:ring-red-500/20 outline-none text-xs sm:text-sm md:text-base transition-all duration-200 cursor-pointer hover:border-red-400"
             >
               {allChampionships.map((championship) => (
-                <option key={championship.id} value={championship.anio}>
+                <option key={championship.id} value={championship.anio} className="bg-[#000000] text-white">
+                  {/* Mostrar solo año en móvil, año + nombre en pantallas más grandes */}
+                  <span className="sm:hidden">{championship.anio}</span>
                   <span className="hidden sm:inline">{championship.anio} - {championship.nombre}</span>
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2 top-3 sm:top-4 w-4 h-4 text-gray-400 pointer-events-none" />
+
+            {/* Icono chevron mejorado */}
+            <div className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 text-gray-200 transition-transform duration-200" />
+            </div>
           </div>
         </div>
 
-        <div className="w-full sm:w-auto">
+        {/* Espacio adicional para otros elementos del header si los hay */}
+        <div className="flex-1 flex items-center justify-end">
+          {/* Aquí puedes agregar otros elementos del header si los necesitas */}
+        </div>
+        <div>
           <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
       </div>
@@ -399,6 +409,6 @@ export default function CampeonatoCompleto({
         )}
 
       </div>
-    </SectionWrapper>
+    </SectionWrapper >
   );
 }

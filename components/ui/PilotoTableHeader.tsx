@@ -17,17 +17,22 @@ const ChampionshipHeader = () => (
   </div>
 );
 
-// Header para Race con sectores
+// Header para Race con sectores - Móvil optimizado
 const RaceWithSectorsHeader = () => (
   <div className="px-4 py-3">
     <div className="grid grid-cols-12 gap-1 items-center text-xs font-semibold text-white uppercase tracking-wider">
-      <div className="col-span-4 sm:col-span-2">Piloto</div>
-      <div className="col-span-3 sm:col-span-2 text-center">Mejor Tiempo</div>
-      <div className="col-span-2 sm:col-span-1 text-center">Diff 1ro</div>
+      {/* Piloto - Más espacio en móvil */}
+      <div className="col-span-5 sm:col-span-2">Piloto</div>
+      {/* Diff 1ro - Visible en móvil */}
+      <div className="col-span-3 sm:col-span-1 text-center">Diff 1ro</div>
+      {/* Mejor Tiempo - Visible en móvil */}
+      <div className="col-span-4 sm:col-span-2 text-center">Mejor Tiempo</div>
+      {/* Sectores - Solo desktop */}
       <div className="col-span-2 sm:col-span-2 text-center hidden sm:block">Sector 1</div>
       <div className="col-span-2 sm:col-span-2 text-center hidden sm:block">Sector 2</div>
       <div className="col-span-2 sm:col-span-2 text-center hidden sm:block">Sector 3</div>
-      <div className="col-span-3 sm:col-span-1 text-center">Vueltas</div>
+      {/* Vueltas - Solo desktop */}
+      <div className="col-span-0 sm:col-span-1 text-center hidden sm:block">Vueltas</div>
     </div>
   </div>
 );
