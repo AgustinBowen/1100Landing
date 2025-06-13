@@ -258,7 +258,7 @@ export async function getCurrentChampionship(): Promise<ChampionshipWithStanding
         puntos: pos.puntos_totales || 0,
         numeroAuto: numeroAutoMap.get(pos.piloto_id) || undefined,
       }));
-    console.log("fetch getcurrentchamp", championshipData, sortedPositions)
+
     return {
       id: championshipData.id,
       nombre: championshipData.nombre,

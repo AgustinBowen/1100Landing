@@ -76,9 +76,8 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
                 return (
                   <div
                     key={race.id}
-                    className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${
-                      isHovered ? 'bg-[#111111]' : ''
-                    }`}
+                    className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${isHovered ? 'bg-[#111111]' : ''
+                      }`}
                     onMouseEnter={() => setHoveredCard(race.id)}
                     onMouseLeave={() => setHoveredCard(null)}
                     onClick={() => handleRaceClick(race.id)}
@@ -121,25 +120,37 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
                             </span>
                           </div>
                         ) : (
-                          <span className="text-gray-500">-</span>
+                          <div className="flex items-center ml-16 gap-2">
+                            <span className="text-gray-300">
+                              -
+                            </span>
+                          </div>
                         )}
                       </div>
 
                       {/* Columna Acciones */}
-                      <div className="col-span-6 sm:col-span-3 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRaceClick(race.id);
-                            }}
-                            title="Ver resultado"
-                          >
-                            Ver Resultado
-                          </button>
+                      {race.status == "completed" ? (
+                        <div className="col-span-6 sm:col-span-3 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <button
+                              className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRaceClick(race.id);
+                              }}
+                              title="Ver resultado"
+                            >
+                              Ver Resultado
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="col-span-6 sm:col-span-3 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <span className="text-gray-300">-</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );

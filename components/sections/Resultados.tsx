@@ -176,12 +176,12 @@ export default function CampeonatoCompleto({
                   pilotos={
                     currentChampionship?.standings
                       ? currentChampionship.standings.map((standing) => ({
-                          id: standing.piloto.id,
-                          piloto: standing.piloto,
-                          posicion: standing.position,
-                          numeroAuto: standing.numeroAuto,
-                          puntos: standing.puntos,
-                        }))
+                        id: standing.piloto.id,
+                        piloto: standing.piloto,
+                        posicion: standing.position,
+                        numeroAuto: standing.numeroAuto,
+                        puntos: standing.puntos,
+                      }))
                       : []
                   }
                   config={{ showAuto: true, showPuntos: true, showTiempo: false, showVueltas: false }}
@@ -249,9 +249,8 @@ export default function CampeonatoCompleto({
                       return (
                         <div
                           key={race.id}
-                          className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${
-                            isHovered ? 'bg-[#111111]' : ''
-                          }`}
+                          className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${isHovered ? 'bg-[#111111]' : ''
+                            }`}
                           onMouseEnter={() => setHoveredCard(race.id)}
                           onMouseLeave={() => setHoveredCard(null)}
                           onClick={() => handleRaceClick(race)}
@@ -291,25 +290,38 @@ export default function CampeonatoCompleto({
                                   </span>
                                 </div>
                               ) : (
-                                <span className="text-gray-500">-</span>
+                                <div className="flex items-center ml-16 gap-2">
+                                  <span className="text-gray-300">
+                                    -
+                                  </span>
+                                </div>
                               )}
                             </div>
 
                             {/* Columna Resultados */}
-                            <div className="col-span-6 sm:col-span-3 text-center">
-                              <div className="flex items-center justify-center gap-2">
-                                <button
-                                  className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleRaceClick(race);
-                                  }}
-                                  title="Ver resultado"
-                                >
-                                  Ver Resultado
-                                </button>
+                            {race.status == "completed" ? (
+                              <div className="col-span-6 sm:col-span-3 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <button
+                                    className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleRaceClick(race);
+                                    }}
+                                    title="Ver resultado"
+                                  >
+                                    Ver Resultado
+                                  </button>
+                                </div>
                               </div>
-                            </div>
+                            ) : (
+                              <div className="col-span-6 sm:col-span-3 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className="text-gray-300">-</span>
+                                </div>
+                              </div>
+                            )}
+
                           </div>
                         </div>
                       );
@@ -347,14 +359,14 @@ export default function CampeonatoCompleto({
                 {/* Race header */}
                 <div className="mb-6 flex flex-col justify-center items-center">
                   <h2 className="text-2xl font-extrabold mb-2">{selectedRace.nombre}</h2>
-                  <p className="text-gray-400">
+                  <p className="text-gray-300">
                     {selectedRace.fecha_hasta
                       ? formatDate(selectedRace.fecha_hasta)
                       : formatDate(selectedRace.fecha_desde)
                     }
                   </p>
                   {selectedRace.circuitoNombre && (
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-300 text-sm">
                       {selectedRace.circuitoNombre}
                       {selectedRace.circuitoDistancia && ` - ${selectedRace.circuitoDistancia}m`}
                     </p>
