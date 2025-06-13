@@ -1,4 +1,5 @@
 // types/championship.ts
+
 export interface Piloto {
   id: string;
   nombre: string;
@@ -16,7 +17,6 @@ export interface Circuito {
   nombre: string;
   distancia?: number;
 }
-
 
 export interface Fecha {
   id: string;
@@ -38,6 +38,7 @@ export interface Entrenamiento {
   tiempo?: number;
   posicion?: number;
   piloto?: Piloto;
+  numeroAuto?: number; // AGREGADO
 }
 
 export interface Clasificacion {
@@ -47,6 +48,7 @@ export interface Clasificacion {
   tiempo?: number;
   posicion: number;
   piloto?: Piloto;
+  numeroAuto?: number; // AGREGADO
 }
 
 export interface SerieClasificatoria {
@@ -57,9 +59,10 @@ export interface SerieClasificatoria {
   posicion?: number;
   puntos: number;
   piloto?: Piloto;
-  tiempo?:number;
-  vueltas?:number;
-  excluido?:boolean;
+  tiempo?: number;
+  vueltas?: number;
+  excluido?: boolean;
+  numeroAuto?: number; // AGREGADO
 }
 
 export interface CarreraFinal {
@@ -70,9 +73,10 @@ export interface CarreraFinal {
   puntos: number;
   presente: boolean;
   piloto?: Piloto;
-  vueltas?:number;
-  tiempo?:number;
-  excluido?:boolean;
+  vueltas?: number;
+  tiempo?: number;
+  excluido?: boolean;
+  numeroAuto?: number; // AGREGADO
 }
 
 export interface PilotoCampeonato {
@@ -162,4 +166,19 @@ export interface HeroSectionProps {
 
 export interface GallerySectionProps {
   images: GalleryImage[];
+}
+
+
+export interface RaceResult {
+  id: string;
+  fecha_id: string;
+  piloto_id: string;
+  piloto?: Piloto;
+  posicion?: number;
+  numeroAuto?: number;
+  tiempo?: number;
+  vueltas?: number;
+  excluido?: boolean;
+  puntos?: number;
+  presente?: boolean;
 }

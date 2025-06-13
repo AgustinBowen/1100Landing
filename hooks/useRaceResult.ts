@@ -1,6 +1,15 @@
 import { useState } from "react";
 import { RaceWithDetails } from "@/types/championship";
 
+// Define the result type as a union type
+export type RaceResultType = 
+  | "carrera_final" 
+  | "series_clasificatorias_1" 
+  | "series_clasificatorias_2" 
+  | "series_clasificatorias_3" 
+  | "clasificacion" 
+  | "entrenamientos";
+
 /**
  * Hook para gestionar el tipo de resultado de carrera y obtener los datos correspondientes.
  * @param race - Objeto de carrera con detalles (opcional).
@@ -9,11 +18,9 @@ import { RaceWithDetails } from "@/types/championship";
  */
 export function useRaceResult(
   race: RaceWithDetails | null,
-  defaultResultType: "carrera_final" | "series_clasificatorias_1" | "series_clasificatorias_2" | "series_clasificatorias_3" | "clasificacion" | "entrenamientos" = "carrera_final"
+  defaultResultType: RaceResultType = "carrera_final"
 ) {
-  const [raceResultType, setRaceResultType] = useState<
-    "carrera_final" | "series_clasificatorias_1" | "series_clasificatorias_2" | "series_clasificatorias_3" | "clasificacion" | "entrenamientos"
-  >(defaultResultType);
+  const [raceResultType, setRaceResultType] = useState<RaceResultType>(defaultResultType);
 
   const getSeriesData = (serieNumber: number) => {
     return race?.series_clasificatorias?.filter((serie) => serie.numero === serieNumber) || [];
@@ -40,9 +47,28 @@ export function useRaceResult(
     }
   };
 
+  // Create a type-safe setter function
+  const setRaceResultTypeSafe = (newType: string) => {
+    const validTypes: RaceResultType[] = [
+      "carrera_final",
+      "series_clasificatorias_1", 
+      "series_clasificatorias_2",
+      "series_clasificatorias_3",
+      "clasificacion",
+      "entrenamientos"
+    ];
+    
+    if (validTypes.includes(newType as RaceResultType)) {
+      setRaceResultType(newType as RaceResultType);
+    } else {
+      console.warn(`Invalid race result type: ${newType}. Defaulting to carrera_final.`);
+      setRaceResultType("carrera_final");
+    }
+  };
+
   return {
     raceResultType,
-    setRaceResultType,
+    setRaceResultType: setRaceResultTypeSafe,
     results: getResults(),
   };
 }

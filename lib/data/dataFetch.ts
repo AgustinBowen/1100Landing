@@ -150,6 +150,16 @@ export async function getAllRaces(): Promise<RaceWithDetails[]> {
     }
 
     if (data) {
+      // Obtener números de auto para el campeonato actual
+      const { data: pilotosCampeonatoData, error: pcError } = await supabase
+        .from('pilotos_campeonato')
+        .select('piloto_id, numero_auto, campeonato_id')
+        .eq('campeonato_id', data[0]?.campeonato_id); // Usar el campeonato_id de la primera carrera
+
+      const numeroAutoMap = new Map<string, number>(
+        (pilotosCampeonatoData || []).map((pc: any) => [pc.piloto_id, pc.numero_auto])
+      );
+
       const racesWithStatus = data.map(race => {
         const raceDate = parseDate(race.fecha_desde);
         const today = new Date();
@@ -179,6 +189,7 @@ export async function getAllRaces(): Promise<RaceWithDetails[]> {
             ...item,
             fecha_id: race.id,
             piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
+            numeroAuto: numeroAutoMap.get(item.piloto_id), // AGREGADO
           })),
           winner,
         } as RaceWithDetails;
@@ -502,6 +513,27 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
     }
 
     if (data) {
+      // Obtener números de auto para este campeonato
+      const { data: pilotosCampeonatoData, error: pcError } = await supabase
+        .from('pilotos_campeonato')
+        .select('piloto_id, numero_auto')
+        .eq('campeonato_id', championshipId);
+
+      if (pcError) {
+        console.error('Error fetching pilotoCampeonato:', pcError.message);
+      }
+
+      const numeroAutoMap = new Map<string, number>(
+        (pilotosCampeonatoData || []).map((pc: any) => [pc.piloto_id, pc.numero_auto])
+      );
+
+      const addNumeroAuto = (item: any) => ({
+        ...item,
+        fecha_id: data.find(race => race.id === item.fecha_id)?.id || item.fecha_id,
+        piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
+        numeroAuto: numeroAutoMap.get(item.piloto_id),
+      });
+
       const racesWithStatus = data.map(race => {
         const raceDate = parseDate(race.fecha_desde);
         const today = new Date();
@@ -528,24 +560,20 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
           circuitoDistancia: race.circuito?.distancia || undefined,
           status,
           entrenamientos: (race.entrenamientos || []).map((item: any) => ({
-            ...item,
-            fecha_id: race.id,
-            piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
+            ...addNumeroAuto(item),
+            fecha_id: race.id, // Asegurar que fecha_id esté correcto
           })),
           clasificacion: (race.clasificacion || []).map((item: any) => ({
-            ...item,
+            ...addNumeroAuto(item),
             fecha_id: race.id,
-            piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
           })),
           series_clasificatorias: (race.series_clasificatorias || []).map((serie: any) => ({
-            ...serie,
+            ...addNumeroAuto(serie),
             fecha_id: race.id,
-            piloto: Array.isArray(serie.piloto) ? serie.piloto[0] : serie.piloto,
           })),
           carrera_final: (race.carrera_final || []).map((item: any) => ({
-            ...item,
+            ...addNumeroAuto(item),
             fecha_id: race.id,
-            piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
           })),
           winner,
         } as RaceWithDetails;

@@ -181,7 +181,7 @@ export default function HeroSection({ raceData }: HeroSectionProps) {
                     </div>
                     <div className="flex items-center gap-3">
                       <Ruler className="w-4 h-4 text-red-500" />
-                      <span>{raceData?.circuitoDistancia ? `${raceData.circuitoDistancia} km` : "Distancia no disponible"}</span>
+                      <span>{raceData?.circuitoDistancia ? `${raceData.circuitoDistancia} m` : "Distancia no disponible"}</span>
                     </div>
                   </div>
                 </>

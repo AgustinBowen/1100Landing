@@ -1,7 +1,7 @@
 "use client";
 
 import { useTabs } from "../../hooks/useTabs";
-import { useRaceResult } from "@/hooks/useRaceResult";
+import { useRaceResult, RaceResultType } from "@/hooks/useRaceResult";
 import { useChampionshipYear } from "@/hooks/useChampionshipYear";
 import { Tabs } from "@/components/ui/Tabs";
 import { SectionWrapper } from "@/components/ui/SectionWrapper";
@@ -104,11 +104,15 @@ export default function CampeonatoCompleto({
     setActiveTab("raceDetails");
   };
 
+  // Type-safe handler for race result type changes
+  const handleRaceResultTypeChange = (tabId: string) => {
+    setRaceResultType(tabId);
+  };
+
   return (
     <SectionWrapper className="py-8 sm:py-12 md:py-16 lg:py-20 text-[12px] px-2 sm:px-4">
       {/* Header section - responsive */}
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center justify-center mb-6">
-        {/* Year selector */}
         <div className="w-full sm:w-auto">
           <div className="relative">
             <select
@@ -119,7 +123,6 @@ export default function CampeonatoCompleto({
               {allChampionships.map((championship) => (
                 <option key={championship.id} value={championship.anio}>
                   <span className="hidden sm:inline">{championship.anio} - {championship.nombre}</span>
-                  <span className="sm:hidden">{championship.anio}</span>
                 </option>
               ))}
             </select>
@@ -127,7 +130,6 @@ export default function CampeonatoCompleto({
           </div>
         </div>
 
-        {/* Main tabs */}
         <div className="w-full sm:w-auto">
           <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
@@ -135,131 +137,137 @@ export default function CampeonatoCompleto({
 
       {/* Content sections */}
       <div className="w-full">
-        {/* Standings content */}
+        {/* Standings content - Estilo igual a CampeonatoSeccion */}
         {activeTab === "standings" && (
-          <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 py-0 overflow-hidden">
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
+              <CardContent className="p-0">
                 <PilotoTable
                   pilotos={
                     currentChampionship?.standings
-                      ? currentChampionship.standings.map((p, idx) => ({
-                          ...p,
-                          posicion: (p as any).posicion ?? idx + 1,
+                      ? currentChampionship.standings.map((standing) => ({
+                          id: standing.piloto.id,
+                          piloto: standing.piloto,
+                          posicion: standing.position,
+                          numeroAuto: standing.numeroAuto,
+                          puntos: standing.puntos,
                         }))
                       : []
                   }
                   config={{ showAuto: true, showPuntos: true, showTiempo: false, showVueltas: false }}
+                  variant="championship"
                 />
+              </CardContent>
+            </Card>
+            {(!currentChampionship || currentChampionship.standings.length === 0) && (
+              <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
+                No hay datos de clasificación disponibles 
               </div>
-              {(!currentChampionship || currentChampionship.standings.length === 0) && (
-                <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
-                  No hay datos de clasificación disponibles 
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            )}
+          </div>
         )}
 
-        {/* All races content - matched to CalendarioSeccion.tsx */}
+        {/* All races content */}
         {activeTab === "races" && (
-          <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
-            <CardContent className="p-0">
-              {/* Header de la tabla */}
-              <div className="px-4 py-3">
-                <div className="grid grid-cols-12 gap-2 items-center text-xs font-semibold text-white uppercase tracking-wider">
-                  <div className="col-span-6 sm:col-span-4">Fecha</div>
-                  <div className="col-span-4 sm:col-span-5 hidden sm:block">Ganador</div>
-                  <div className="col-span-6 sm:col-span-3 text-center">Resultados</div>
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
+              <CardContent className="p-0">
+                {/* Header de la tabla */}
+                <div className="px-4 py-3">
+                  <div className="grid grid-cols-12 gap-2 items-center text-xs font-semibold text-white uppercase tracking-wider">
+                    <div className="col-span-6 sm:col-span-4">Fecha</div>
+                    <div className="col-span-4 sm:col-span-5 hidden sm:block">Ganador</div>
+                    <div className="col-span-6 sm:col-span-3 text-center">Resultados</div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Filas de carreras */}
-              <div>
-                {championshipRaces.map((race, index) => {
-                  const statusConfig = getStatusConfig(race.status ?? "upcoming");
-                  const isHovered = hoveredCard === race.id;
+                {/* Filas de carreras */}
+                <div>
+                  {championshipRaces.map((race, index) => {
+                    const statusConfig = getStatusConfig(race.status ?? "upcoming");
+                    const isHovered = hoveredCard === race.id;
 
-                  return (
-                    <div
-                      key={race.id}
-                      className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${
-                        isHovered ? 'bg-[#111111]' : ''
-                      }`}
-                      onMouseEnter={() => setHoveredCard(race.id)}
-                      onMouseLeave={() => setHoveredCard(null)}
-                      onClick={() => handleRaceClick(race)}
-                    >
-                      <div className="grid grid-cols-12 gap-2 items-center">
-                        {/* Columna Fecha */}
-                        <div className="col-span-6 sm:col-span-4">
-                          <div className="flex items-center gap-3">
-                            {/* Número de carrera */}
-                            <div className="flex-shrink-0">
-                              <div className="w-8 h-8 rounded bg-red-500 flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">{index + 1}</span>
+                    return (
+                      <div
+                        key={race.id}
+                        className={`px-4 py-4 hover:bg-[#111111] transition-colors duration-200 cursor-pointer group ${
+                          isHovered ? 'bg-[#111111]' : ''
+                        }`}
+                        onMouseEnter={() => setHoveredCard(race.id)}
+                        onMouseLeave={() => setHoveredCard(null)}
+                        onClick={() => handleRaceClick(race)}
+                      >
+                        <div className="grid grid-cols-12 gap-2 items-center">
+                          {/* Columna Fecha */}
+                          <div className="col-span-6 sm:col-span-4">
+                            <div className="flex items-center gap-3">
+                              {/* Número de carrera */}
+                              <div className="flex-shrink-0">
+                                <div className="w-8 h-8 rounded bg-red-500 flex items-center justify-center">
+                                  <span className="text-white font-bold text-sm">{index + 1}</span>
+                                </div>
                               </div>
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="font-semibold text-white text-sm truncate">
-                                {race.nombre}
-                              </div>
-                              <div className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                                <Calendar className="w-3 h-3" />
-                                {formatDate(race.fecha_desde)}
-                              </div>
-                              <div className="text-xs text-gray-500 truncate">
-                                {race.circuitoNombre || 'Circuito no especificado'}
+                              <div className="min-w-0 flex-1">
+                                <div className="font-semibold text-white text-sm truncate">
+                                  {race.nombre}
+                                </div>
+                                <div className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                                  <Calendar className="w-3 h-3" />
+                                  {formatDate(race.fecha_desde)}
+                                </div>
+                                <div className="text-xs text-gray-500 truncate">
+                                  {race.circuitoNombre || 'Circuito no especificado'}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* Columna Ganador - oculta en móvil */}
-                        <div className="col-span-4 sm:col-span-5 hidden sm:block">
-                          {race.status === "completed" && race.winner ? (
-                            <div className="flex items-center gap-2">
-                              <Trophy className="w-4 h-4 text-yellow-500 flex-shrink-0" />
-                              <span className="text-white font-medium text-sm truncate">
-                                {race.winner}
-                              </span>
+                          {/* Columna Ganador - oculta en móvil */}
+                          <div className="col-span-4 sm:col-span-5 hidden sm:block">
+                            {race.status === "completed" && race.winner ? (
+                              <div className="flex items-center gap-2">
+                                <Trophy className="w-4 h-4 text-yellow-500 flex-shrink-0" />
+                                <span className="text-white font-medium text-sm truncate">
+                                  {race.winner}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="text-gray-500">-</span>
+                            )}
+                          </div>
+
+                          {/* Columna Resultados */}
+                          <div className="col-span-6 sm:col-span-3 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRaceClick(race);
+                                }}
+                                title="Ver resultado"
+                              >
+                                Ver Resultado
+                              </button>
                             </div>
-                          ) : (
-                            <span className="text-gray-500">-</span>
-                          )}
-                        </div>
-
-                        {/* Columna Resultados */}
-                        <div className="col-span-6 sm:col-span-3 text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <button
-                              className="text-white text-sm underline p-2 rounded-2xl hover:text-red-500 transition-colors cursor-pointer"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleRaceClick(race);
-                              }}
-                              title="Ver resultado"
-                            >
-                              Ver Resultado
-                            </button>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {championshipRaces.length === 0 && (
-                <div className="p-8 text-center text-gray-400">
-                  No hay carreras disponibles para este campeonato
+                    );
+                  })}
                 </div>
-              )}
-            </CardContent>
-          </Card>
+
+                {championshipRaces.length === 0 && (
+                  <div className="p-8 text-center text-gray-400">
+                    No hay carreras disponibles para este campeonato
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         )}
 
-        {/* Race details content */}
+        {/* Race details content - Estilo igual a CampeonatoSeccion */}
         {activeTab === "raceDetails" && (
           <div>
             {!selectedRace ? (
@@ -276,53 +284,63 @@ export default function CampeonatoCompleto({
               </div>
             ) : (
               <div>
-                {/* Race header */}
-                <div className="mb-4 sm:mb-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2">
-                    {selectedRace.nombre}
-                  </h2>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-gray-400 text-sm">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {formatDate(selectedRace.fecha_desde)}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-4 h-4" />
+                {/* Race header - igual a CampeonatoSeccion */}
+                <div className="mb-6 flex flex-col justify-center items-center">
+                  <h2 className="text-2xl font-extrabold mb-2">{selectedRace.nombre}</h2>
+                  <p className="text-gray-400">
+                    {selectedRace.fecha_hasta
+                      ? formatDate(selectedRace.fecha_hasta)
+                      : formatDate(selectedRace.fecha_desde)
+                    }
+                  </p>
+                  {selectedRace.circuitoNombre && (
+                    <p className="text-gray-500 text-sm">
                       {selectedRace.circuitoNombre}
-                    </div>
-                  </div>
+                      {selectedRace.circuitoDistancia && ` - ${selectedRace.circuitoDistancia}m`}
+                    </p>
+                  )}
                 </div>
 
                 {/* Result type tabs */}
-                <div className="mb-4">
+                <div className="mb-4 flex justify-center">
                   <Tabs
                     tabs={resultTypeTabs}
                     activeTab={raceResultType}
-                    onTabChange={(tabId) =>
-                      setRaceResultType(tabId as typeof raceResultType)
-                    }
+                    onTabChange={handleRaceResultTypeChange}
                   />
                 </div>
 
-                {/* Results table */}
-                <Card className="bg-[#000000] text-sm border-0 shadow-2xl shadow-red-500/40 py-0 overflow-hidden">
-                  <CardContent className="p-0">
-                    <div className="overflow-x-auto">
+                {/* Results table - con el mismo estilo que CampeonatoSeccion */}
+                <div className="max-w-4xl mx-auto">
+                  <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
+                    <CardContent className="p-0">
                       <PilotoTable
-                        pilotos={results.map((p, idx) => ({
-                          ...p,
-                          posicion: p.posicion ?? idx + 1,
+                        pilotos={results.map((result) => ({
+                          id: result.id,
+                          piloto: result.piloto,
+                          posicion: result.posicion || 0,
+                          numeroAuto: result.numeroAuto,
+                          tiempo: result.tiempo,
+                          vueltas: 'vueltas' in result ? result.vueltas : undefined,
+                          excluido: 'excluido' in result ? result.excluido : false,
+                          puntos: 'puntos' in result ? (result as any).puntos : undefined,
                         }))}
-                        config={{ showAuto: true, showPuntos: true, showTiempo: true, showVueltas: true }}
+                        config={{
+                          showAuto: true,
+                          showPuntos: results.some(r => 'puntos' in r && (r as any).puntos !== undefined),
+                          showTiempo: true,
+                          showVueltas: true
+                        }}
+                        variant="race"
                       />
+                    </CardContent>
+                  </Card>
+                  {results.length === 0 && (
+                    <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
+                      No hay resultados disponibles para {raceResultType.replace("_", " ")}
                     </div>
-                    {results.length === 0 && (
-                      <div className="p-4 sm:p-8 text-center text-gray-400 text-sm">
-                        No hay resultados disponibles para {raceResultType.replace("_", " ")}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                  )}
+                </div>
               </div>
             )}
           </div>
