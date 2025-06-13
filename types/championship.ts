@@ -38,8 +38,8 @@ export interface Entrenamiento {
   tiempo?: number;
   posicion?: number;
   piloto?: Piloto;
-  numeroAuto?: number; 
-  vueltas?:number;
+  numeroAuto?: number;
+  vueltas?: number;
 }
 
 export interface Clasificacion {
@@ -49,8 +49,11 @@ export interface Clasificacion {
   tiempo?: number;
   posicion: number;
   piloto?: Piloto;
-  numeroAuto?: number; 
-  vueltas?:number;
+  numeroAuto?: number;
+  vueltas?: number;
+  sector1?: number;
+  sector2?: number;
+  sector3?: number;
 }
 
 export interface SerieClasificatoria {
@@ -180,6 +183,9 @@ export interface RaceResult {
   numeroAuto?: number;
   tiempo?: number;
   vueltas?: number;
+  sector1?: number;
+  sector2?: number;
+  sector3?: number;
   excluido?: boolean;
   puntos?: number;
   presente?: boolean;

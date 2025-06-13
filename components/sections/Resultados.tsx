@@ -80,55 +80,6 @@ export default function CampeonatoCompleto({
 
   const resultTypeTabs = getResultTypeTabs();
 
-  const getStatusConfig = (status: string) => {
-    switch (status) {
-      case "completed":
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-green-500/30",
-          hoverBorder: "hover:border-green-500",
-          hoverShadow: "hover:shadow-green-500/20",
-          icon: <CheckCircle className="w-4 h-4 text-green-500" />,
-          badge: "FINALIZADA",
-          badgeColor: "bg-green-600",
-          badgeTextColor: "text-white",
-        };
-      case "live":
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-red-500/70",
-          hoverBorder: "hover:border-red-500",
-          hoverShadow: "hover:shadow-red-500/40",
-          icon: <Flag className="w-4 h-4 text-red-500 animate-pulse" />,
-          badge: "EN VIVO",
-          badgeColor: "bg-red-600 animate-pulse",
-          badgeTextColor: "text-white",
-        };
-      case "upcoming":
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-gray-500/20",
-          hoverBorder: "hover:border-white/50",
-          hoverShadow: "hover:shadow-white/10",
-          icon: <Clock className="w-4 h-4 text-gray-400" />,
-          badge: "PRÓXIMAMENTE",
-          badgeColor: "bg-gray-600",
-          badgeTextColor: "text-white",
-        };
-      default:
-        return {
-          bgColor: "bg-[#080808]",
-          borderColor: "border-gray-500/20",
-          hoverBorder: "hover:border-white/50",
-          hoverShadow: "hover:shadow-white/10",
-          icon: <Clock className="w-4 h-4 text-gray-400" />,
-          badge: "PRÓXIMAMENTE",
-          badgeColor: "bg-gray-600",
-          badgeTextColor: "text-white",
-        };
-    }
-  };
-
   const handleRaceClick = (race: RaceWithDetails) => {
     setSelectedRace(race);
     setActiveTab("raceDetails");
@@ -142,7 +93,7 @@ export default function CampeonatoCompleto({
   return (
     <SectionWrapper className="py-8 sm:py-12 md:py-16 lg:py-20 text-[12px] px-2 sm:px-4">
       {/* Header section - responsive */}
-      <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center justify-center mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full mb-4">
         <div className="w-full sm:w-auto">
           <div className="relative">
             <select
@@ -169,7 +120,7 @@ export default function CampeonatoCompleto({
       <div className="w-full">
         {/* Standings content - con skeleton loading */}
         {activeTab === "standings" && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
               <CardContent className="p-0">
                 <PilotoTable
@@ -184,7 +135,7 @@ export default function CampeonatoCompleto({
                       }))
                       : []
                   }
-                  config={{ showAuto: true, showPuntos: true, showTiempo: false, showVueltas: false }}
+                  config={{ showPuntos: true, showTiempo: false, showVueltas: false }}
                   variant="championship"
                   isLoading={isLoadingChampionship}
                   skeletonRows={10}
@@ -196,7 +147,7 @@ export default function CampeonatoCompleto({
 
         {/* All races content - skeleton para la lista de carreras */}
         {activeTab === "races" && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
               <CardContent className="p-0">
                 {/* Header de la tabla */}
@@ -243,7 +194,6 @@ export default function CampeonatoCompleto({
                   ) : (
                     // Contenido real de carreras
                     championshipRaces.map((race, index) => {
-                      const statusConfig = getStatusConfig(race.status ?? "upcoming");
                       const isHovered = hoveredCard === race.id;
 
                       return (
@@ -356,9 +306,35 @@ export default function CampeonatoCompleto({
               </div>
             ) : (
               <div>
+                {/* DEBUG: botón para loguear resultados 
+                <div className="mb-4 flex justify-center">
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+                    onClick={() => {
+                      console.log("Resultados originales:", results);
+                      const pilotosDebug = results.map((result) => ({
+                        id: result.id,
+                        piloto: result.piloto,
+                        posicion: result.posicion || 0,
+                        numeroAuto: result.numeroAuto,
+                        tiempo: result.tiempo,
+                        sector1: result.sector1,
+                        sector2: result.sector2,
+                        sector3: result.sector3,
+                        vueltas: 'vueltas' in result ? result.vueltas : undefined,
+                        excluido: 'excluido' in result ? result.excluido : false,
+                        puntos: 'puntos' in result ? (result as any).puntos : undefined,
+                      }));
+                      console.log("Pilotos mapeados:", pilotosDebug);
+                    }}
+                  >
+                    Ver data en consola
+                  </button>
+                </div>*/}
+
                 {/* Race header */}
-                <div className="mb-6 flex flex-col justify-center items-center">
-                  <h2 className="text-2xl font-extrabold mb-2">{selectedRace.nombre}</h2>
+                <div className="mb-4 flex flex-col">
+                  <h2 className="text-2xl font-extrabold mb-0">{selectedRace.nombre}</h2>
                   <p className="text-gray-300">
                     {selectedRace.fecha_hasta
                       ? formatDate(selectedRace.fecha_hasta)
@@ -374,7 +350,7 @@ export default function CampeonatoCompleto({
                 </div>
 
                 {/* Result type tabs */}
-                <div className="mb-4 flex justify-center">
+                <div className="mb-4 flex items-center">
                   <Tabs
                     tabs={resultTypeTabs}
                     activeTab={raceResultType}
@@ -382,8 +358,8 @@ export default function CampeonatoCompleto({
                   />
                 </div>
 
-                {/* Results table - con skeleton loading */}
-                <div className="max-w-4xl mx-auto">
+                {/* PilotoTable */}
+                <div className="max-w-7xl mx-auto">
                   <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden">
                     <CardContent className="p-0">
                       <PilotoTable
@@ -393,15 +369,22 @@ export default function CampeonatoCompleto({
                           posicion: result.posicion || 0,
                           numeroAuto: result.numeroAuto,
                           tiempo: result.tiempo,
+                          sector1: result.sector1,
+                          sector2: result.sector2,
+                          sector3: result.sector3,
                           vueltas: 'vueltas' in result ? result.vueltas : undefined,
                           excluido: 'excluido' in result ? result.excluido : false,
                           puntos: 'puntos' in result ? (result as any).puntos : undefined,
                         }))}
                         config={{
-                          showAuto: true,
                           showPuntos: results.some(r => 'puntos' in r && (r as any).puntos !== undefined),
                           showTiempo: true,
-                          showVueltas: true
+                          showVueltas: true,
+                          showSectores: results.some(r =>
+                            r.sector1 !== undefined ||
+                            r.sector2 !== undefined ||
+                            r.sector3 !== undefined
+                          )
                         }}
                         variant="race"
                         isLoading={isLoadingResults}
@@ -414,6 +397,7 @@ export default function CampeonatoCompleto({
             )}
           </div>
         )}
+
       </div>
     </SectionWrapper>
   );

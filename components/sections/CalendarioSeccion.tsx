@@ -57,7 +57,7 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
         </div>
 
         {/* Tabla optimizada */}
-        <Card className="bg-[#000000] border-0 shadow-2xl shadow-red-500/40 overflow-hidden max-w-3xl mx-auto">
+        <Card className="bg-[#000000] z-20 relative border-0 shadow-2xl shadow-red-500/40 overflow-hidden max-w-7xl mx-auto">
           <CardContent className="p-0">
             {/* Header de la tabla */}
             <div className="px-4 py-3">
@@ -96,14 +96,14 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
                             <div className="font-semibold text-white text-sm truncate">
                               {race.nombre}
                             </div>
-                            <div className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                            <div className="text-xs text-gray-300 flex items-center gap-1 mt-0.5">
                               <Calendar className="w-3 h-3" />
                               {formatDate(race.fecha_desde)}
                               {race.fecha_hasta && race.fecha_hasta !== race.fecha_desde
                                 ? ` - ${formatDate(race.fecha_hasta)}`
                                 : ''}
                             </div>
-                            <div className="text-xs text-gray-500 truncate">
+                            <div className="text-xs text-gray-300 truncate">
                               {race.circuitoNombre || 'Circuito no especificado'}
                             </div>
                           </div>
@@ -196,7 +196,7 @@ export default function CalendarSection({ races, stats, onRaceClick }: CalendarS
         </div>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 via-transparent to-red-500/5 pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 via-transparent z-0 to-red-500/5 pointer-events-none"></div>
     </div>
   );
 }

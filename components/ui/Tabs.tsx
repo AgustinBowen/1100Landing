@@ -30,7 +30,7 @@ export function Tabs({ tabs, activeTab, onTabChange, className }: TabsProps) {
             hover:cursor-pointer
             ${activeTab === tab.id 
               ? "bg-red-600 text-white" 
-              : "text-gray-200 hover:text-white hover:bg-red-600/50"
+              : "text-gray-200 hover:text-white hover:bg-red-600"
             }
           `}
           title={tab.label} // Tooltip para mostrar texto completo en móviles

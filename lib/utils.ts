@@ -24,3 +24,11 @@ export function formatearTiempo(tiempoStr:string) {
 
   return `${minutos}:${segundos}.${milisegundos}`;
 }
+
+export function formatearSector(tiempoStr: string | number): string {
+  const tiempo = typeof tiempoStr === "string" ? parseFloat(tiempoStr) : tiempoStr;
+
+  if (isNaN(tiempo)) return "-";
+
+  return tiempo.toFixed(3).replace('.', ',');
+}

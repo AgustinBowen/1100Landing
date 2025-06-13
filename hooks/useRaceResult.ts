@@ -67,6 +67,9 @@ export function useRaceResult(selectedRace: RaceWithDetails | null) {
       excluido: result.excluido,
       puntos: result.puntos,
       presente: result.presente,
+      sector1: result.sector1,
+      sector2: result.sector2,
+      sector3: result.sector3,
     }));
 
     // Ordenar por posición (null/undefined al final)

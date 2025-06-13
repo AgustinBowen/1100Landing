@@ -335,8 +335,8 @@ export async function getLatestRace(): Promise<RaceWithDetails | null> {
         campeonato_id,
         campeonato:campeonatos(id, nombre, anio),
         circuito:circuitos(nombre, distancia),
-        entrenamientos(id, numero, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
-        clasificacion(id, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
+        entrenamientos(id, numero, piloto_id, tiempo, posicion,vueltas,sector_1,sector_2,sector_3, piloto:pilotos(nombre, pais)),
+        clasificacion(id, piloto_id, tiempo, posicion,vueltas,sector_1,sector_2,sector_3, piloto:pilotos(nombre, pais)),
         series_clasificatorias(id, numero, piloto_id, posicion, puntos, tiempo, vueltas, excluido, piloto:pilotos(nombre, pais)),
         carrera_final(id, piloto_id, posicion, puntos, presente, tiempo, vueltas, excluido, piloto:pilotos(nombre, pais))
       `)
@@ -370,6 +370,9 @@ export async function getLatestRace(): Promise<RaceWithDetails | null> {
       fecha_id: data.id,
       piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
       numeroAuto: numeroAutoMap.get(item.piloto_id),
+      sector1: item.sector_1,
+      sector2: item.sector_2,
+      sector3: item.sector_3,
     });
 
     const raceDate = new Date(data.fecha_desde);
@@ -393,7 +396,15 @@ export async function getLatestRace(): Promise<RaceWithDetails | null> {
       campeonato: Array.isArray(data.campeonato) ? data.campeonato[0] : data.campeonato,
       status,
       entrenamientos: (data.entrenamientos || []).map(addNumeroAuto),
-      clasificacion: (data.clasificacion || []).map(addNumeroAuto),
+      clasificacion: (data.clasificacion || []).map((item: any) => ({
+        ...item,
+        fecha_id: data.id,
+        piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
+        numeroAuto: numeroAutoMap.get(item.piloto_id),
+        sector1: item.sector_1,
+        sector2: item.sector_2,
+        sector3: item.sector_3,
+      })),
       series_clasificatorias: (data.series_clasificatorias || []).map(addNumeroAuto),
       carrera_final: (data.carrera_final || []).map(addNumeroAuto),
     };
@@ -503,14 +514,14 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
         campeonato_id,
         campeonato:campeonatos(nombre, anio),
         circuito:circuitos(nombre, distancia),
-        entrenamientos(id, numero, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
-        clasificacion(id, piloto_id, tiempo, posicion,vueltas, piloto:pilotos(nombre, pais)),
+        entrenamientos(id, numero, piloto_id, tiempo, posicion,sector_1,sector_2,sector_3,vueltas, piloto:pilotos(nombre, pais)),
+        clasificacion(id, piloto_id, tiempo, posicion,vueltas,sector_1,sector_2,sector_3, piloto:pilotos(nombre, pais)),
         series_clasificatorias(id, numero, piloto_id, posicion, puntos,tiempo,vueltas, piloto:pilotos(nombre, pais)),
         carrera_final(id, piloto_id, posicion, puntos, presente,tiempo,vueltas,excluido, piloto:pilotos(nombre, pais))
       `)
       .eq('campeonato_id', championshipId)
       .order('fecha_desde', { ascending: true }) as unknown as { data: any[]; error: any };
-        
+    console.log(data)
     if (error) {
       console.error('Error fetching championship races:', error.message);
       return [];
@@ -536,6 +547,9 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
         fecha_id: data.find(race => race.id === item.fecha_id)?.id || item.fecha_id,
         piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
         numeroAuto: numeroAutoMap.get(item.piloto_id),
+        sector1: item.sector_1,
+        sector2: item.sector_2,
+        sector3: item.sector_3,
       });
 
       const racesWithStatus = data.map(race => {
@@ -565,11 +579,16 @@ export async function getChampionshipRaces(championshipId: string): Promise<Race
           status,
           entrenamientos: (race.entrenamientos || []).map((item: any) => ({
             ...addNumeroAuto(item),
-            fecha_id: race.id, 
+            fecha_id: race.id,
           })),
           clasificacion: (race.clasificacion || []).map((item: any) => ({
-            ...addNumeroAuto(item),
+            ...item,
             fecha_id: race.id,
+            piloto: Array.isArray(item.piloto) ? item.piloto[0] : item.piloto,
+            numeroAuto: numeroAutoMap.get(item.piloto_id),
+            sector1: item.sector_1,
+            sector2: item.sector_2,
+            sector3: item.sector_3,
           })),
           series_clasificatorias: (race.series_clasificatorias || []).map((serie: any) => ({
             ...addNumeroAuto(serie),

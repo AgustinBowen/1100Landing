@@ -166,7 +166,7 @@ export default function Navigation() {
                   }
                   setMobileMenuOpen(false);
                 }}
-                className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg transition-colors text-left text-white inline-block"
+                className="bg-red-500 hover:bg-red-400 px-6 py-3 rounded-lg transition-colors text-left text-white inline-block"
               >
                 Live timing
               </a>
